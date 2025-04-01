@@ -2,6 +2,8 @@ package com.demo.novieindopdracht.models;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name="categories")
 public class Category {
@@ -12,6 +14,8 @@ public class Category {
     private Long parentId;
     @Column(unique=true)
     private String title;
+    @ManyToMany(mappedBy = "categories")
+    List<Advertisement> advertisements;
 
     public Long getCategoryId() {
         return categoryId;
@@ -35,5 +39,13 @@ public class Category {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public List<Advertisement> getAdvertisements() {
+        return advertisements;
+    }
+
+    public void setAdvertisements(List<Advertisement> advertisements) {
+        this.advertisements = advertisements;
     }
 }

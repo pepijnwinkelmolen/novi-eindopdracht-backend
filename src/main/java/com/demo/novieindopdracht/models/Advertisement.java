@@ -3,6 +3,7 @@ package com.demo.novieindopdracht.models;
 import jakarta.persistence.*;
 
 import java.io.File;
+import java.util.List;
 
 @Entity
 @Table(name="advertisements")
@@ -12,13 +13,24 @@ public class Advertisement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long advertisementId;
     private Long categoryId;
-    private Long userId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    User user;
     private String title;
     private String description;
     private Double price;
     private File image;
     private String details;
     private String state;
+    @OneToMany(mappedBy = "advertisement")
+    List<Bid> bids;
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(
+            name = "advertisements_categories",
+            joinColumns = @JoinColumn(name = "advertisement_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    List<Category> categories;
 
     public Long getAdvertisementId() {
         return advertisementId;
@@ -36,12 +48,20 @@ public class Advertisement {
         this.categoryId = categoryId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public List<Bid> getBids() {
+        return bids;
+    }
+
+    public void setBids(List<Bid> bids) {
+        this.bids = bids;
     }
 
     public String getTitle() {
@@ -90,5 +110,13 @@ public class Advertisement {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
 }

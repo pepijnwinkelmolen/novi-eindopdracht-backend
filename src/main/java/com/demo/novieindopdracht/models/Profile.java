@@ -9,7 +9,8 @@ public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long profileId;
-    private Long userId;
+    @OneToOne(mappedBy = "profile")
+    User user;
     private String residence;
     @Column(unique=true)
     private String phoneNumber;
@@ -24,12 +25,12 @@ public class Profile {
         this.profileId = profileId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long id) {
-        this.userId = id;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getResidence() {

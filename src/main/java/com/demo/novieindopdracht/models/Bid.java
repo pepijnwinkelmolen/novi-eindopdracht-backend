@@ -3,13 +3,18 @@ package com.demo.novieindopdracht.models;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="reactions")
+@Table(name="bids")
 public class Bid {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bidId;
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    User user;
+    @ManyToOne
+    @JoinColumn(name = "advertisement_id")
+    Advertisement advertisement;
     private Double price;
 
     public Long getBidId() {
@@ -20,12 +25,20 @@ public class Bid {
         this.bidId = bidId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Advertisement getAdvertisement() {
+        return advertisement;
+    }
+
+    public void setAdvertisement(Advertisement advertisement) {
+        this.advertisement = advertisement;
     }
 
     public Double getPrice() {
