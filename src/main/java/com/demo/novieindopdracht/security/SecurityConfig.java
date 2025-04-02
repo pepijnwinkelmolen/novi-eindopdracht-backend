@@ -1,6 +1,5 @@
 package com.demo.novieindopdracht.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -38,6 +37,11 @@ public class SecurityConfig {
                     .requestMatchers("/admins").hasAuthority("ROLE_ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN")
                     .requestMatchers("/authenticate").permitAll()
+                    .requestMatchers(HttpMethod.GET,"/advertisements").permitAll()
+                    .requestMatchers(HttpMethod.GET,"/advertisements/{id}").permitAll()
+                    .requestMatchers(HttpMethod.DELETE,"/advertisements/{id}").permitAll()
+                    .requestMatchers("/advertisements/search").permitAll()
+                    .requestMatchers("/advertisements/filter").permitAll()
                     .anyRequest().denyAll()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

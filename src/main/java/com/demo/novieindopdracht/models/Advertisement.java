@@ -3,6 +3,8 @@ package com.demo.novieindopdracht.models;
 import jakarta.persistence.*;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -13,7 +15,7 @@ public class Advertisement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long advertisementId;
     private Long categoryId;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
     private String title;
@@ -22,6 +24,8 @@ public class Advertisement {
     private File image;
     private String details;
     private String state;
+    private LocalDate date = LocalDate.now();
+    private String hasToGo;
     @OneToMany(mappedBy = "advertisement")
     List<Bid> bids;
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
@@ -118,5 +122,21 @@ public class Advertisement {
 
     public void setCategories(List<Category> categories) {
         this.categories = categories;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public String getHasToGo() {
+        return hasToGo;
+    }
+
+    public void setHasToGo(String hasToGo) {
+        this.hasToGo = hasToGo;
     }
 }

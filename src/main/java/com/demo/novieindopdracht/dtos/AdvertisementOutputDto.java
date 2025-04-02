@@ -2,7 +2,7 @@ package com.demo.novieindopdracht.dtos;
 
 import java.io.File;
 
-public class AdvertisementInputDto {
+public class AdvertisementOutputDto {
     public Long advertisementId;
     public Long categoryId;
     public String title;
