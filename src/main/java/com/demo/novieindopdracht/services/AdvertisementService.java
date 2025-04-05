@@ -137,6 +137,7 @@ public class AdvertisementService {
         advertisementRepos.deleteByAdvertisementId(id);
     }
 
+    @Transactional
     public AdvertisementOutputDto createAdvert(@Valid AdvertisementInputDto advertisementInputDto) {
         Advertisement item = AdvertisementMapper.toEntity(advertisementInputDto);
         advertisementRepos.save(item);

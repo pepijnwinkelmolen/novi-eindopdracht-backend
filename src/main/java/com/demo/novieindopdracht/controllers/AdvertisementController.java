@@ -4,11 +4,9 @@ import com.demo.novieindopdracht.dtos.AdvertisementInputDto;
 import com.demo.novieindopdracht.dtos.AdvertisementOutputDto;
 import com.demo.novieindopdracht.dtos.AdvertisementProjectionOutputDto;
 import com.demo.novieindopdracht.services.AdvertisementService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +16,7 @@ import java.util.List;
 
 @RestController
 @Validated
+@CrossOrigin
 @RequestMapping("/advertisements")
 public class AdvertisementController {
 
@@ -44,7 +43,7 @@ public class AdvertisementController {
     @GetMapping("/filter")
     public ResponseEntity<List<AdvertisementOutputDto>> getFilteredAdvertisements(@RequestParam(name="price") @Valid @Min(0) @Max(100) Double price,
                                                        @RequestParam(name="since", required = false) @Valid String since,
-                                                       @RequestParam(name="hasToGo", required = false) @Valid String hasToGo) {
+                                                       @RequestParam(name="has-to-go", required = false) @Valid String hasToGo) {
         List<AdvertisementOutputDto> items = advertisementService.getAllAdvertisementsWithFilter(price, since, hasToGo);
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
@@ -55,12 +54,14 @@ public class AdvertisementController {
         return new ResponseEntity<>(item, HttpStatus.OK);
     }
 
+    @Transactional
     @PostMapping
-    public ResponseEntity<AdvertisementOutputDto> createAdvert(@Valid @RequestBody AdvertisementInputDto advertisementInputDto) {
+    public ResponseEntity<AdvertisementOutputDto> createAdvert(@RequestBody @Valid @NotNull AdvertisementInputDto advertisementInputDto) {
         AdvertisementOutputDto item = advertisementService.createAdvert(advertisementInputDto);
         return new ResponseEntity<>(item, HttpStatus.CREATED);
     }
 
+    @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAdvert(@PathVariable(name = "id") @Valid long id) {
         advertisementService.deleteAdvert(id);

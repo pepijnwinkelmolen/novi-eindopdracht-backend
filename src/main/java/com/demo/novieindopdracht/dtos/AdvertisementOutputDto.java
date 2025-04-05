@@ -1,6 +1,7 @@
 package com.demo.novieindopdracht.dtos;
 
 import java.io.File;
+import java.time.LocalDate;
 
 public class AdvertisementOutputDto {
     public Long advertisementId;
@@ -11,4 +12,6 @@ public class AdvertisementOutputDto {
     public File image;
     public String details;
     public String state;
+    public LocalDate date;
+    public String hasToGo;
 }

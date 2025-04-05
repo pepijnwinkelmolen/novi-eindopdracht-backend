@@ -14,10 +14,12 @@ public class User {
     @Column(unique=true)
     private String username;
     private String password;
+    private String tos;
+    private String prPolicy;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "profile_id", nullable = false)
     Profile profile;
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -51,6 +53,22 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getTos() {
+        return tos;
+    }
+
+    public void setTos(String tos) {
+        this.tos = tos;
+    }
+
+    public String getPrpolicy() {
+        return prPolicy;
+    }
+
+    public void setPrpolicy(String prpolicy) {
+        this.prPolicy = prpolicy;
     }
 
     public Profile getProfile() {

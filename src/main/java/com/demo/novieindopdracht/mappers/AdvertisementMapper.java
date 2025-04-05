@@ -21,6 +21,8 @@ public class AdvertisementMapper {
         advertisement.setImage(advertisementInputDto.image);
         advertisement.setDetails(advertisementInputDto.details);
         advertisement.setState(advertisementInputDto.state);
+        advertisement.setDate(advertisementInputDto.date);
+        advertisement.setHasToGo(advertisementInputDto.hasToGo);
 
         return advertisement;
     }
@@ -35,6 +37,8 @@ public class AdvertisementMapper {
         advertisementOutputDto.image = advertisement.getImage();
         advertisementOutputDto.details = advertisement.getDetails();
         advertisementOutputDto.state = advertisement.getState();
+        advertisementOutputDto.date = advertisement.getDate();
+        advertisementOutputDto.hasToGo = advertisement.getHasToGo();
 
         return advertisementOutputDto;
     }
