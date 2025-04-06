@@ -6,17 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/product")
-public class ProductController {
+@CrossOrigin
+@RequestMapping("/bids")
+public class BidController {
 
-
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable long id) {
-        return new ResponseEntity<>("", HttpStatus.OK);
-    }
-
-    @PostMapping
-    public ResponseEntity<?> createBidOnAdvert(@RequestBody BidInputDto bidInputDto) {
+    @PostMapping("/{value}/advertisement/{id}/user/{userId}")
+    public ResponseEntity<?> createBidOnAdvert(@PathVariable String id, @PathVariable String value, @PathVariable String userId) {
         return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 }

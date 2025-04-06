@@ -1,28 +1,28 @@
 package com.demo.novieindopdracht.controllers;
 
+import com.demo.novieindopdracht.dtos.ProfileOutputDto;
+import com.demo.novieindopdracht.services.ProfileService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/profile")
 public class ProfileController {
 
-    @PutMapping
-    public ResponseEntity<?> updateUsername() {
-        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+    private final ProfileService profileService;
+
+    public ProfileController(ProfileService profileService) {
+        this.profileService = profileService;
     }
 
-    @PutMapping
-    public ResponseEntity<?> updatePassword() {
-        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
-    }
-
-    @DeleteMapping
-    public ResponseEntity<?> deleteUser() {
-        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+    @GetMapping
+    public ResponseEntity<ProfileOutputDto> getProfile(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token) {
+        ProfileOutputDto profileOutputDto = profileService.getProfile(token);
+        return new ResponseEntity<>(profileOutputDto, HttpStatus.OK);
     }
 }

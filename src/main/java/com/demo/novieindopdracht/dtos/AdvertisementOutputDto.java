@@ -3,7 +3,7 @@ package com.demo.novieindopdracht.dtos;
 import java.io.File;
 import java.time.LocalDate;
 
-public class AdvertisementInputDto {
+public class AdvertisementOutputDto {
     public Long advertisementId;
     public Long categoryId;
     public String title;
