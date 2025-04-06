@@ -7,7 +7,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,32 +24,36 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<UserOutputDto> getUserByUsername(@PathVariable @Valid @NotBlank
-                                                               @Pattern(regexp = "^[A-Za-z0-9_]+$", message = "Not a valid input") String username) {
-        UserOutputDto item = userService.getUserByUsername(username);
+    @GetMapping("/login")
+    public ResponseEntity<UserOutputDto> loginUser(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token) {
+        UserOutputDto item = userService.loginUser(token);
         return new ResponseEntity<>(item, HttpStatus.OK);
     }
 
     @Transactional
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> createUser(@RequestBody @Valid @NotNull NewUserDto newUserDto) {
         userService.createUser(newUserDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/username")
-    public ResponseEntity<?> updateUsername(@PathVariable(name = "id") @Valid @NotNull Long id, String username) {
+    @Transactional
+    @PutMapping("/update/username")
+    public ResponseEntity<?> updateUsername(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @RequestBody @Valid @NotNull @NotBlank String username) {
+        userService.setNewUsername(token, username.substring(1, username.length() - 1));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/{id}/password")
-    public ResponseEntity<?> updatePassword(@PathVariable Long id, String password) {
+    @Transactional
+    @PutMapping("/update/password")
+    public ResponseEntity<?> updatePassword(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @RequestBody @Valid @NotNull @NotBlank String password) {
+        userService.setNewPassword(token, password.substring(1, password.length() - 1));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    @Transactional
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUser(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

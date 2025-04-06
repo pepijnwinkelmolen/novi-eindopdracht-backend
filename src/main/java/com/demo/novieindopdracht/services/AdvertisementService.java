@@ -7,13 +7,16 @@ import com.demo.novieindopdracht.exceptions.BadRequestException;
 import com.demo.novieindopdracht.exceptions.ResourceNotFoundException;
 import com.demo.novieindopdracht.mappers.AdvertisementMapper;
 import com.demo.novieindopdracht.models.Advertisement;
+import com.demo.novieindopdracht.models.Category;
 import com.demo.novieindopdracht.projections.AdvertisementSummary;
 import com.demo.novieindopdracht.repositories.AdvertisementRepository;
+import com.demo.novieindopdracht.repositories.CategoryRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,9 +25,11 @@ import java.util.Optional;
 public class AdvertisementService {
 
     private final AdvertisementRepository advertisementRepos;
+    private final CategoryRepository categoryRepository;
 
-    public AdvertisementService(AdvertisementRepository advertisementRepos) {
+    public AdvertisementService(AdvertisementRepository advertisementRepos, CategoryRepository categoryRepository) {
         this.advertisementRepos = advertisementRepos;
+        this.categoryRepository = categoryRepository;
     }
 
     public List<AdvertisementOutputDto> getAllAdvertisementsLikeQuery(String query) {
@@ -120,6 +125,17 @@ public class AdvertisementService {
             }
         } else {
             throw new ResourceNotFoundException("No adverts found with these parameters");
+        }
+    }
+
+    public List<AdvertisementOutputDto> getAllAdvertisementsByCategory(@Valid String category) {
+        List<Category> categories = new ArrayList<>();
+        categories.add(categoryRepository.findByTitle(category));
+        Optional<List<Advertisement>> items = advertisementRepos.getAdvertisementsByCategories(categories);
+        if (items.isPresent()) {
+            return AdvertisementMapper.toDtoList(items.get());
+        } else {
+            throw new ResourceNotFoundException("No adverts found");
         }
     }
 

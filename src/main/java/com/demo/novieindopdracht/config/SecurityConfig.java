@@ -56,12 +56,15 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.POST,"/login").permitAll()
-                    .requestMatchers(HttpMethod.POST,"/users").permitAll()
-                    .requestMatchers(HttpMethod.GET,"/users/{username}").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers(HttpMethod.GET,"/users/login").permitAll()
+                    .requestMatchers(HttpMethod.POST,"/users/create").permitAll()
+                    .requestMatchers(HttpMethod.PUT,"/users/update/password").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers(HttpMethod.PUT,"/users/update/username").hasAnyRole("ADMIN", "USER")
                     .requestMatchers(HttpMethod.GET, "/profile").hasAnyRole("ADMIN", "USER")
                     .requestMatchers("/admins").hasAuthority("ROLE_ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET,"/advertisements").permitAll()
+                    .requestMatchers(HttpMethod.GET,"/advertisements/category/{category}").permitAll()
                     .requestMatchers(HttpMethod.GET,"/advertisements/{id}").permitAll()
                     .requestMatchers(HttpMethod.DELETE,"/advertisements/{id}").permitAll()
                     .requestMatchers(HttpMethod.POST,"/advertisements").permitAll()

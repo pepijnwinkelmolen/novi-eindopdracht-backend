@@ -54,6 +54,12 @@ public class AdvertisementController {
         return new ResponseEntity<>(item, HttpStatus.OK);
     }
 
+    @GetMapping("/category/{category}")
+    public ResponseEntity<List<AdvertisementOutputDto>> getAdvertisementsByCategory(@PathVariable(name = "category") @Valid String category) {
+        List<AdvertisementOutputDto> items = advertisementService.getAllAdvertisementsByCategory(category);
+        return new ResponseEntity<>(items, HttpStatus.OK);
+    }
+
     @Transactional
     @PostMapping
     public ResponseEntity<AdvertisementOutputDto> createAdvert(@RequestBody @Valid @NotNull AdvertisementInputDto advertisementInputDto) {
