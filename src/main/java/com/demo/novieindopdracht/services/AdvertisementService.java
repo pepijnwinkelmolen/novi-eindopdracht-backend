@@ -5,18 +5,24 @@ import com.demo.novieindopdracht.dtos.AdvertisementOutputDto;
 import com.demo.novieindopdracht.dtos.AdvertisementProjectionOutputDto;
 import com.demo.novieindopdracht.exceptions.BadRequestException;
 import com.demo.novieindopdracht.exceptions.ResourceNotFoundException;
+import com.demo.novieindopdracht.helpers.validateUser;
 import com.demo.novieindopdracht.mappers.AdvertisementMapper;
 import com.demo.novieindopdracht.models.Advertisement;
 import com.demo.novieindopdracht.models.Category;
+import com.demo.novieindopdracht.models.Role;
+import com.demo.novieindopdracht.models.User;
 import com.demo.novieindopdracht.projections.AdvertisementSummary;
 import com.demo.novieindopdracht.repositories.AdvertisementRepository;
 import com.demo.novieindopdracht.repositories.CategoryRepository;
+import com.demo.novieindopdracht.repositories.UserRepository;
+import com.demo.novieindopdracht.security.JwtService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,10 +32,14 @@ public class AdvertisementService {
 
     private final AdvertisementRepository advertisementRepos;
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepos;
+    private final JwtService jwtService;
 
-    public AdvertisementService(AdvertisementRepository advertisementRepos, CategoryRepository categoryRepository) {
+    public AdvertisementService(AdvertisementRepository advertisementRepos, CategoryRepository categoryRepository, UserRepository userRepos, JwtService jwtService) {
         this.advertisementRepos = advertisementRepos;
         this.categoryRepository = categoryRepository;
+        this.userRepos = userRepos;
+        this.jwtService = jwtService;
     }
 
     public List<AdvertisementOutputDto> getAllAdvertisementsLikeQuery(String query) {
@@ -129,13 +139,17 @@ public class AdvertisementService {
     }
 
     public List<AdvertisementOutputDto> getAllAdvertisementsByCategory(@Valid String category) {
-        List<Category> categories = new ArrayList<>();
-        categories.add(categoryRepository.findByTitle(category));
-        Optional<List<Advertisement>> items = advertisementRepos.getAdvertisementsByCategories(categories);
-        if (items.isPresent()) {
-            return AdvertisementMapper.toDtoList(items.get());
+        System.out.println(category);
+        Optional<Category> cat = Optional.ofNullable(categoryRepository.findByTitle(category));
+        if(cat.isPresent()) {
+            Optional<List<Advertisement>> items = advertisementRepos.getAdvertisementsByCategoryId(cat.get().getCategoryId());
+            if (items.isPresent()) {
+                return AdvertisementMapper.toDtoList(items.get());
+            } else {
+                throw new ResourceNotFoundException("No adverts found");
+            }
         } else {
-            throw new ResourceNotFoundException("No adverts found");
+            throw new ResourceNotFoundException("No such category");
         }
     }
 
@@ -149,7 +163,42 @@ public class AdvertisementService {
     }
 
     @Transactional
-    public void deleteAdvert(@Valid long id) {
+    public void deleteAdvert(@Valid @NotNull @NotBlank String token, @Valid long id) {
+        if(validateUser.validateUserWithToken(token, jwtService, userRepos)) {
+            token = token.replace("Bearer ", "");
+            String username = jwtService.extractUsername(token);
+            Optional<User> currentUser = userRepos.findByUsername(username);
+            if(currentUser.isPresent()) {
+                List<Role> roles = currentUser.get().getRoles();
+                String myRole = "user";
+                for (Role value : roles) {
+                    String role = value.getRole();
+                    if (Objects.equals(role, "ROLE_ADMIN")) {
+                        myRole = "admin";
+                        break;
+                    }
+                }
+                if(Objects.equals(myRole, "admin")) {
+                    advertisementRepos.deleteByAdvertisementId(id);
+                } else {
+                    Optional<Advertisement> optionalAdvertisement = advertisementRepos.findByAdvertisementId(id);
+                    if(optionalAdvertisement.isPresent()) {
+                        if(Objects.equals(optionalAdvertisement.get().getUser().getUsername(), username)) {
+                            advertisementRepos.deleteByAdvertisementId(id);
+                        } else {
+                            throw new BadRequestException("Invalid user");
+                        }
+                    } else {
+                        throw new BadRequestException("Invalid input");
+                    }
+                }
+            } else {
+                throw new BadRequestException("Invalid input");
+            }
+        } else {
+            throw new BadRequestException("User unauthorized");
+        }
+
         advertisementRepos.deleteByAdvertisementId(id);
     }
 

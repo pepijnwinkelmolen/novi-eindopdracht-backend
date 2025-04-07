@@ -50,16 +50,17 @@ public class AdvertisementController {
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
-    //needs to be checked
+    //done
     @GetMapping("/{id}")
     public ResponseEntity<AdvertisementOutputDto> getAdvertisementById(@PathVariable(name = "id") @Valid long id) {
         AdvertisementOutputDto item = advertisementService.getAdvertisementById(id);
         return new ResponseEntity<>(item, HttpStatus.OK);
     }
 
-    //needs testing
+    //done
     @GetMapping("/category/{category}")
     public ResponseEntity<List<AdvertisementOutputDto>> getAdvertisementsByCategory(@PathVariable(name = "category") @Valid String category) {
+        System.out.println(category);
         List<AdvertisementOutputDto> items = advertisementService.getAllAdvertisementsByCategory(category);
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
@@ -72,11 +73,11 @@ public class AdvertisementController {
         return new ResponseEntity<>(item, HttpStatus.CREATED);
     }
 
-    //needs authentication
+    //done
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAdvert(@PathVariable(name = "id") @Valid long id) {
-        advertisementService.deleteAdvert(id);
+    public ResponseEntity<?> deleteAdvert(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @PathVariable(name = "id") @Valid long id) {
+        advertisementService.deleteAdvert(token, id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
