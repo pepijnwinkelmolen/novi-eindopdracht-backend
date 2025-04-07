@@ -39,7 +39,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    //almost done, needs check on whether user exists
+    //done needs testing
     @Transactional
     @PutMapping("/update/username")
     public ResponseEntity<?> updateUsername(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @RequestBody @Valid @NotNull @NotBlank String username) {

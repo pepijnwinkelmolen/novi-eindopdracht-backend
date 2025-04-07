@@ -143,21 +143,26 @@ public class UserService {
             Optional<User> currentUser = userRepos.findByUsername(username);
             if(currentUser.isPresent()) {
                 List<Role> roles = currentUser.get().getRoles();
+                String myRole = "user";
                 for (Role value : roles) {
                     String role = value.getRole();
                     if (Objects.equals(role, "ROLE_ADMIN")) {
-                        userRepos.deleteByUserId(id);
+                        myRole = "admin";
                     }
                 }
-                Optional<User> optionalUser = userRepos.findByUserId(id);
-                if(optionalUser.isPresent()) {
-                    if(Objects.equals(optionalUser.get().getUsername(), username)) {
-                        userRepos.deleteByUserId(id);
+                if(Objects.equals(myRole, "admin")) {
+                    userRepos.deleteByUserId(id);
+                } else {
+                    Optional<User> optionalUser = userRepos.findByUserId(id);
+                    if(optionalUser.isPresent()) {
+                        if(Objects.equals(optionalUser.get().getUsername(), username)) {
+                            userRepos.deleteByUserId(id);
+                        } else {
+                            throw new BadRequestException("Invalid user");
+                        }
                     } else {
                         throw new BadRequestException("Invalid input");
                     }
-                } else {
-                    throw new BadRequestException("Invalid input");
                 }
             } else {
                 throw new BadRequestException("Invalid input");

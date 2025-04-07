@@ -5,14 +5,21 @@ import com.demo.novieindopdracht.dtos.AdvertisementOutputDto;
 import com.demo.novieindopdracht.dtos.AdvertisementProjectionOutputDto;
 import com.demo.novieindopdracht.exceptions.BadRequestException;
 import com.demo.novieindopdracht.exceptions.ResourceNotFoundException;
+import com.demo.novieindopdracht.helpers.validateUser;
 import com.demo.novieindopdracht.mappers.AdvertisementMapper;
 import com.demo.novieindopdracht.models.Advertisement;
 import com.demo.novieindopdracht.models.Category;
+import com.demo.novieindopdracht.models.Role;
+import com.demo.novieindopdracht.models.User;
 import com.demo.novieindopdracht.projections.AdvertisementSummary;
 import com.demo.novieindopdracht.repositories.AdvertisementRepository;
 import com.demo.novieindopdracht.repositories.CategoryRepository;
+import com.demo.novieindopdracht.repositories.UserRepository;
+import com.demo.novieindopdracht.security.JwtService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -26,10 +33,14 @@ public class AdvertisementService {
 
     private final AdvertisementRepository advertisementRepos;
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepos;
+    private final JwtService jwtService;
 
-    public AdvertisementService(AdvertisementRepository advertisementRepos, CategoryRepository categoryRepository) {
+    public AdvertisementService(AdvertisementRepository advertisementRepos, CategoryRepository categoryRepository, UserRepository userRepos, JwtService jwtService) {
         this.advertisementRepos = advertisementRepos;
         this.categoryRepository = categoryRepository;
+        this.userRepos = userRepos;
+        this.jwtService = jwtService;
     }
 
     public List<AdvertisementOutputDto> getAllAdvertisementsLikeQuery(String query) {
@@ -149,7 +160,41 @@ public class AdvertisementService {
     }
 
     @Transactional
-    public void deleteAdvert(@Valid long id) {
+    public void deleteAdvert(@Valid @NotNull @NotBlank String token, @Valid long id) {
+        if(validateUser.validateUserWithToken(token, jwtService, userRepos)) {
+            token = token.replace("Bearer ", "");
+            String username = jwtService.extractUsername(token);
+            Optional<User> currentUser = userRepos.findByUsername(username);
+            if(currentUser.isPresent()) {
+                List<Role> roles = currentUser.get().getRoles();
+                String myRole = "user";
+                for (Role value : roles) {
+                    String role = value.getRole();
+                    if (Objects.equals(role, "ROLE_ADMIN")) {
+                        myRole = "admin";
+                    }
+                }
+                if(Objects.equals(myRole, "admin")) {
+                    userRepos.deleteByUserId(id);
+                } else {
+                    Optional<Advertisement> optionalAdvertisement = advertisementRepos.findByAdvertisementId(id);
+                    if(optionalAdvertisement.isPresent()) {
+                        if(Objects.equals(optionalAdvertisement.get().getUser().getUsername(), username)) {
+                            userRepos.deleteByUserId(id);
+                        } else {
+                            throw new BadRequestException("Invalid user");
+                        }
+                    } else {
+                        throw new BadRequestException("Invalid input");
+                    }
+                }
+            } else {
+                throw new BadRequestException("Invalid input");
+            }
+        } else {
+            throw new BadRequestException("User unauthorized");
+        }
+
         advertisementRepos.deleteByAdvertisementId(id);
     }
 
