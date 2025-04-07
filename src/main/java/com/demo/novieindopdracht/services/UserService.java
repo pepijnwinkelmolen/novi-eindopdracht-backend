@@ -81,7 +81,7 @@ public class UserService {
     }
 
     @Transactional
-    public void setNewPassword(String token, String password) {
+    public void setNewPassword(@Valid @NotNull @NotBlank String token, String password) {
         try {
             if (password.matches("^[A-Za-z0-9_]+$")) {
                 if (validateUser.validateUserWithToken(token, jwtService, userRepos)) {
@@ -148,10 +148,14 @@ public class UserService {
                     String role = value.getRole();
                     if (Objects.equals(role, "ROLE_ADMIN")) {
                         myRole = "admin";
+                        break;
                     }
                 }
                 if(Objects.equals(myRole, "admin")) {
-                    userRepos.deleteByUserId(id);
+                    Optional<User> optionalUser = userRepos.findByUserId(id);
+                    if(optionalUser.isPresent()) {
+                        userRepos.deleteByUserId(id);
+                    }
                 } else {
                     Optional<User> optionalUser = userRepos.findByUserId(id);
                     if(optionalUser.isPresent()) {

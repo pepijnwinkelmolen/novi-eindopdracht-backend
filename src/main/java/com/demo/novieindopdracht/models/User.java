@@ -28,7 +28,7 @@ public class User {
     List<Role> roles;
     @OneToMany(mappedBy = "user")
     List<Bid> bids;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<Advertisement> advertisements;
 
     public Long getUserId() {

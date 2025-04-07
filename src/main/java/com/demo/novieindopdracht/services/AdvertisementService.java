@@ -23,7 +23,6 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -140,13 +139,17 @@ public class AdvertisementService {
     }
 
     public List<AdvertisementOutputDto> getAllAdvertisementsByCategory(@Valid String category) {
-        List<Category> categories = new ArrayList<>();
-        categories.add(categoryRepository.findByTitle(category));
-        Optional<List<Advertisement>> items = advertisementRepos.getAdvertisementsByCategories(categories);
-        if (items.isPresent()) {
-            return AdvertisementMapper.toDtoList(items.get());
+        System.out.println(category);
+        Optional<Category> cat = Optional.ofNullable(categoryRepository.findByTitle(category));
+        if(cat.isPresent()) {
+            Optional<List<Advertisement>> items = advertisementRepos.getAdvertisementsByCategoryId(cat.get().getCategoryId());
+            if (items.isPresent()) {
+                return AdvertisementMapper.toDtoList(items.get());
+            } else {
+                throw new ResourceNotFoundException("No adverts found");
+            }
         } else {
-            throw new ResourceNotFoundException("No adverts found");
+            throw new ResourceNotFoundException("No such category");
         }
     }
 
@@ -172,15 +175,16 @@ public class AdvertisementService {
                     String role = value.getRole();
                     if (Objects.equals(role, "ROLE_ADMIN")) {
                         myRole = "admin";
+                        break;
                     }
                 }
                 if(Objects.equals(myRole, "admin")) {
-                    userRepos.deleteByUserId(id);
+                    advertisementRepos.deleteByAdvertisementId(id);
                 } else {
                     Optional<Advertisement> optionalAdvertisement = advertisementRepos.findByAdvertisementId(id);
                     if(optionalAdvertisement.isPresent()) {
                         if(Objects.equals(optionalAdvertisement.get().getUser().getUsername(), username)) {
-                            userRepos.deleteByUserId(id);
+                            advertisementRepos.deleteByAdvertisementId(id);
                         } else {
                             throw new BadRequestException("Invalid user");
                         }
