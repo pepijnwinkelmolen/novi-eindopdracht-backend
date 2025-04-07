@@ -24,12 +24,14 @@ public class UserController {
         this.userService = userService;
     }
 
+    //done
     @GetMapping("/login")
     public ResponseEntity<UserOutputDto> loginUser(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token) {
         UserOutputDto item = userService.loginUser(token);
         return new ResponseEntity<>(item, HttpStatus.OK);
     }
 
+    //done
     @Transactional
     @PostMapping("/create")
     public ResponseEntity<?> createUser(@RequestBody @Valid @NotNull NewUserDto newUserDto) {
@@ -37,6 +39,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    //done
     @Transactional
     @PutMapping("/update/username")
     public ResponseEntity<?> updateUsername(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @RequestBody @Valid @NotNull @NotBlank String username) {
@@ -44,6 +47,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    //almost done, needs check on whether user exists
     @Transactional
     @PutMapping("/update/password")
     public ResponseEntity<?> updatePassword(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @RequestBody @Valid @NotNull @NotBlank String password) {
@@ -51,9 +55,11 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    //needs to be made
     @Transactional
-    @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteUser(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteUser(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @PathVariable(name = "id") @Valid long id) {
+        userService.deleteUserById(token, id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
