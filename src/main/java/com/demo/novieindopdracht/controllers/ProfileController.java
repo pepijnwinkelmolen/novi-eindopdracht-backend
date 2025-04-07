@@ -20,6 +20,7 @@ public class ProfileController {
         this.profileService = profileService;
     }
 
+    //done
     @GetMapping
     public ResponseEntity<ProfileOutputDto> getProfile(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token) {
         ProfileOutputDto profileOutputDto = profileService.getProfile(token);

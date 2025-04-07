@@ -63,6 +63,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, "/profile").hasAnyRole("ADMIN", "USER")
                     .requestMatchers("/admins").hasAuthority("ROLE_ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/users/{id}").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.GET,"/categories").permitAll()
                     .requestMatchers(HttpMethod.GET,"/advertisements").permitAll()
                     .requestMatchers(HttpMethod.GET,"/advertisements/category/{category}").permitAll()
                     .requestMatchers(HttpMethod.GET,"/advertisements/{id}").permitAll()

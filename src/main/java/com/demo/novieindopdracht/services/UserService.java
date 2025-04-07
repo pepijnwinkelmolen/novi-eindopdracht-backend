@@ -128,4 +128,8 @@ public class UserService {
             throw new BadRequestException(err.getMessage());
         }
     }
+
+    public void deleteUserById(@Valid @NotNull @NotBlank String token, @Valid long id) {
+
+    }
 }

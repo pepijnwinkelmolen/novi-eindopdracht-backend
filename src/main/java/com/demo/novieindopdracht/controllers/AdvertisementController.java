@@ -26,12 +26,14 @@ public class AdvertisementController {
         this.advertisementService = advertisementService;
     }
 
+    //done
     @GetMapping
     public ResponseEntity<List<AdvertisementProjectionOutputDto>> getAdvertisements() {
         List<AdvertisementProjectionOutputDto> items = advertisementService.getAllAdvertisements();
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
+    //done
     @GetMapping("/search")
     public ResponseEntity<List<AdvertisementOutputDto>> getSearchedAdvertisements(@RequestParam(name="query") @Valid @Size(min = 3, max = 20)
                                                                                       @Pattern(regexp = "^[A-Za-z0-9_]+$", message = "Not a valid input") String query) {
@@ -39,7 +41,7 @@ public class AdvertisementController {
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
-
+    //done
     @GetMapping("/filter")
     public ResponseEntity<List<AdvertisementOutputDto>> getFilteredAdvertisements(@RequestParam(name="price") @Valid @Min(0) @Max(100) Double price,
                                                        @RequestParam(name="since", required = false) @Valid String since,
@@ -48,18 +50,21 @@ public class AdvertisementController {
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
+    //needs to be checked
     @GetMapping("/{id}")
     public ResponseEntity<AdvertisementOutputDto> getAdvertisementById(@PathVariable(name = "id") @Valid long id) {
         AdvertisementOutputDto item = advertisementService.getAdvertisementById(id);
         return new ResponseEntity<>(item, HttpStatus.OK);
     }
 
+    //needs testing
     @GetMapping("/category/{category}")
     public ResponseEntity<List<AdvertisementOutputDto>> getAdvertisementsByCategory(@PathVariable(name = "category") @Valid String category) {
         List<AdvertisementOutputDto> items = advertisementService.getAllAdvertisementsByCategory(category);
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
+    //needs to be created
     @Transactional
     @PostMapping
     public ResponseEntity<AdvertisementOutputDto> createAdvert(@RequestBody @Valid @NotNull AdvertisementInputDto advertisementInputDto) {
@@ -67,6 +72,7 @@ public class AdvertisementController {
         return new ResponseEntity<>(item, HttpStatus.CREATED);
     }
 
+    //needs authentication
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAdvert(@PathVariable(name = "id") @Valid long id) {
