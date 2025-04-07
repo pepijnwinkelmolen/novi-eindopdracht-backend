@@ -110,14 +110,19 @@ public class UserService {
         try {
             if (username.matches("^[A-Za-z0-9_]+$")) {
                 if (validateUser.validateUserWithToken(token, jwtService, userRepos)) {
-                    token = token.replace("Bearer ", "");
-                    Optional<User> opUser = userRepos.findByUsername(jwtService.extractUsername(token));
-                    if (opUser.isPresent()) {
-                        User user = opUser.get();
-                        user.setUsername(username);
-                        userRepos.save(user);
+                    Optional<User> usernameChecker = userRepos.findByUsername(username);
+                    if(usernameChecker.isEmpty()) {
+                        token = token.replace("Bearer ", "");
+                        Optional<User> opUser = userRepos.findByUsername(jwtService.extractUsername(token));
+                        if (opUser.isPresent()) {
+                            User user = opUser.get();
+                            user.setUsername(username);
+                            userRepos.save(user);
+                        } else {
+                            throw new ResourceNotFoundException("Invalid token");
+                        }
                     } else {
-                        throw new ResourceNotFoundException("Invalid token");
+                        throw new BadRequestException("Invalid username");
                     }
                 } else {
                     throw new BadRequestException("Invalid token");
@@ -138,9 +143,9 @@ public class UserService {
             Optional<User> currentUser = userRepos.findByUsername(username);
             if(currentUser.isPresent()) {
                 List<Role> roles = currentUser.get().getRoles();
-                for (int i = 0; i < roles.size(); i++) {
-                    String role = roles.get(i).getRole();
-                    if(Objects.equals(role, "ROLE_ADMIN")) {
+                for (Role value : roles) {
+                    String role = value.getRole();
+                    if (Objects.equals(role, "ROLE_ADMIN")) {
                         userRepos.deleteByUserId(id);
                     }
                 }

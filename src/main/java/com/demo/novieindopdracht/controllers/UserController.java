@@ -12,8 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.naming.AuthenticationException;
-
 @RestController
 @CrossOrigin
 @Validated
@@ -57,7 +55,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    //needs to be made
+    //done needs testing
     @Transactional
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteUser(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @PathVariable(name = "id") @Valid long id) {
