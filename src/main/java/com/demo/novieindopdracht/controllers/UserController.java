@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.AuthenticationException;
+
 @RestController
 @CrossOrigin
 @Validated
@@ -39,7 +41,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    //done
+    //almost done, needs check on whether user exists
     @Transactional
     @PutMapping("/update/username")
     public ResponseEntity<?> updateUsername(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @RequestBody @Valid @NotNull @NotBlank String username) {
@@ -47,7 +49,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    //almost done, needs check on whether user exists
+    //done
     @Transactional
     @PutMapping("/update/password")
     public ResponseEntity<?> updatePassword(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @RequestBody @Valid @NotNull @NotBlank String password) {

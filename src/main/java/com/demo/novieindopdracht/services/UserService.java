@@ -105,6 +105,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void setNewUsername(@Valid @NotNull @NotBlank String token, String username) {
         try {
             if (username.matches("^[A-Za-z0-9_]+$")) {
@@ -129,7 +130,35 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void deleteUserById(@Valid @NotNull @NotBlank String token, @Valid long id) {
-
+        if(validateUser.validateUserWithToken(token, jwtService, userRepos)) {
+            token = token.replace("Bearer ", "");
+            String username = jwtService.extractUsername(token);
+            Optional<User> currentUser = userRepos.findByUsername(username);
+            if(currentUser.isPresent()) {
+                List<Role> roles = currentUser.get().getRoles();
+                for (int i = 0; i < roles.size(); i++) {
+                    String role = roles.get(i).getRole();
+                    if(Objects.equals(role, "ROLE_ADMIN")) {
+                        userRepos.deleteByUserId(id);
+                    }
+                }
+                Optional<User> optionalUser = userRepos.findByUserId(id);
+                if(optionalUser.isPresent()) {
+                    if(Objects.equals(optionalUser.get().getUsername(), username)) {
+                        userRepos.deleteByUserId(id);
+                    } else {
+                        throw new BadRequestException("Invalid input");
+                    }
+                } else {
+                    throw new BadRequestException("Invalid input");
+                }
+            } else {
+                throw new BadRequestException("Invalid input");
+            }
+        } else {
+            throw new BadRequestException("User unauthorized");
+        }
     }
 }
