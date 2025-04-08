@@ -11,8 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @Validated
@@ -68,9 +71,14 @@ public class AdvertisementController {
     //needs to be created
     @Transactional
     @PostMapping
-    public ResponseEntity<AdvertisementOutputDto> createAdvert(@RequestBody @Valid @NotNull AdvertisementInputDto advertisementInputDto) {
-        AdvertisementOutputDto item = advertisementService.createAdvert(advertisementInputDto);
-        return new ResponseEntity<>(item, HttpStatus.CREATED);
+    public ResponseEntity<String> createAdvert(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token,
+                                                               @ModelAttribute AdvertisementInputDto advertisementInputDto) {
+        Long id = advertisementService.createAdvert(token, advertisementInputDto);
+        String url = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/product/")
+                .path(Objects.requireNonNull(id.toString()))
+                .toUriString();
+        return ResponseEntity.created(URI.create(url)).body("Uw advertentie is aangemaakt.");
     }
 
     //done

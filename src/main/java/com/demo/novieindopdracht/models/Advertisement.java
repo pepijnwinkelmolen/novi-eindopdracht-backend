@@ -2,9 +2,7 @@ package com.demo.novieindopdracht.models;
 
 import jakarta.persistence.*;
 
-import java.io.File;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -14,14 +12,13 @@ public class Advertisement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long advertisementId;
-    private Long categoryId;
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
     private String title;
     private String description;
     private Double price;
-    private File image;
+    private String image;
     private String details;
     private String state;
     private LocalDate date = LocalDate.now();
@@ -42,14 +39,6 @@ public class Advertisement {
 
     public void setAdvertisementId(Long advertisementId) {
         this.advertisementId = advertisementId;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
     }
 
     public User getUser() {
@@ -92,11 +81,11 @@ public class Advertisement {
         this.price = price;
     }
 
-    public File getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(File image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

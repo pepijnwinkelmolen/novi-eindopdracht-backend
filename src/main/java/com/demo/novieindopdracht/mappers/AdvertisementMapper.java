@@ -11,18 +11,14 @@ import java.util.stream.Collectors;
 
 public class AdvertisementMapper {
 
-    public static Advertisement toEntity(AdvertisementInputDto advertisementInputDto) {
+    public static Advertisement toEntity(AdvertisementInputDto advertisementInputDto, String filename) {
         Advertisement advertisement = new Advertisement();
-        advertisement.setAdvertisementId(advertisementInputDto.advertisementId);
-        advertisement.setCategoryId(advertisementInputDto.categoryId);
         advertisement.setTitle(advertisementInputDto.title);
         advertisement.setDescription(advertisementInputDto.description);
         advertisement.setPrice(advertisementInputDto.price);
-        advertisement.setImage(advertisementInputDto.image);
+        advertisement.setImage(filename);
         advertisement.setDetails(advertisementInputDto.details);
         advertisement.setState(advertisementInputDto.state);
-        advertisement.setDate(advertisementInputDto.date);
-        advertisement.setHasToGo(advertisementInputDto.hasToGo);
 
         return advertisement;
     }
@@ -30,7 +26,6 @@ public class AdvertisementMapper {
     public static AdvertisementOutputDto toDto(Advertisement advertisement) {
         AdvertisementOutputDto advertisementOutputDto = new AdvertisementOutputDto();
         advertisementOutputDto.advertisementId = advertisement.getAdvertisementId();
-        advertisementOutputDto.categoryId = advertisement.getCategoryId();
         advertisementOutputDto.title = advertisement.getTitle();
         advertisementOutputDto.description = advertisement.getDescription();
         advertisementOutputDto.price = advertisement.getPrice();

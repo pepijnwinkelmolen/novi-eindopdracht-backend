@@ -23,6 +23,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,12 +35,14 @@ public class AdvertisementService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepos;
     private final JwtService jwtService;
+    private final StorageService storageService;
 
-    public AdvertisementService(AdvertisementRepository advertisementRepos, CategoryRepository categoryRepository, UserRepository userRepos, JwtService jwtService) {
+    public AdvertisementService(AdvertisementRepository advertisementRepos, CategoryRepository categoryRepository, UserRepository userRepos, JwtService jwtService, StorageService storageService) {
         this.advertisementRepos = advertisementRepos;
         this.categoryRepository = categoryRepository;
         this.userRepos = userRepos;
         this.jwtService = jwtService;
+        this.storageService = storageService;
     }
 
     public List<AdvertisementOutputDto> getAllAdvertisementsLikeQuery(String query) {
@@ -140,9 +143,11 @@ public class AdvertisementService {
 
     public List<AdvertisementOutputDto> getAllAdvertisementsByCategory(@Valid String category) {
         System.out.println(category);
-        Optional<Category> cat = Optional.ofNullable(categoryRepository.findByTitle(category));
+        Optional<Category> cat = categoryRepository.findByTitle(category);
         if(cat.isPresent()) {
-            Optional<List<Advertisement>> items = advertisementRepos.getAdvertisementsByCategoryId(cat.get().getCategoryId());
+            List<Category> catList = new ArrayList<>();
+            catList.add(cat.get());
+            Optional<List<Advertisement>> items = advertisementRepos.getAdvertisementsByCategories(catList);
             if (items.isPresent()) {
                 return AdvertisementMapper.toDtoList(items.get());
             } else {
@@ -198,14 +203,38 @@ public class AdvertisementService {
         } else {
             throw new BadRequestException("User unauthorized");
         }
-
-        advertisementRepos.deleteByAdvertisementId(id);
     }
 
     @Transactional
-    public AdvertisementOutputDto createAdvert(@Valid AdvertisementInputDto advertisementInputDto) {
-        Advertisement item = AdvertisementMapper.toEntity(advertisementInputDto);
-        advertisementRepos.save(item);
-        return AdvertisementMapper.toDto(item);
+    public Long createAdvert(@Valid @NotNull @NotBlank String token, @Valid AdvertisementInputDto advertisementInputDto) {
+        try {
+            if(validateUser.validateUserWithToken(token, jwtService, userRepos)) {
+                token = token.replace("Bearer ", "");
+                String username = jwtService.extractUsername(token);
+                Optional<User> currentUser = userRepos.findByUsername(username);
+                if(currentUser.isPresent()) {
+                    String filename = storageService.store(advertisementInputDto.image);
+                    Advertisement item = AdvertisementMapper.toEntity(advertisementInputDto, filename);
+                    item.setUser(currentUser.get());
+                    item.setImage(filename);
+                    Optional<Category> cat = categoryRepository.findByTitle(advertisementInputDto.category);
+                    if(cat.isPresent()) {
+                        List<Category> catList = new ArrayList<>();
+                        catList.add(cat.get());
+                        item.setCategories(catList);
+                        advertisementRepos.save(item);
+                        return item.getAdvertisementId();
+                    } else {
+                        throw new BadRequestException("Invalid category");
+                    }
+                } else {
+                    throw new BadRequestException("Invalid token");
+                }
+            } else {
+                throw new BadRequestException("Invalid token");
+            }
+        } catch (BadRequestException err) {
+            throw new BadRequestException(err.getMessage());
+        }
     }
 }
