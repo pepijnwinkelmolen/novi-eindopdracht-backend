@@ -10,6 +10,7 @@ public class AdvertisementInputDto {
     public MultipartFile image;
     public String details;
     public String state;
+    public String hasToGo;
 
     public void logData() {
         System.out.println(category + title + description + price + image + details + state);
@@ -69,5 +70,13 @@ public class AdvertisementInputDto {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getHasToGo() {
+        return hasToGo;
+    }
+
+    public void setHasToGo(String hasToGo) {
+        this.hasToGo = hasToGo;
     }
 }

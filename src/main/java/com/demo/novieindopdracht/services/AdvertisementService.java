@@ -22,6 +22,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,14 +55,14 @@ public class AdvertisementService {
             if (advertToDtoList.isEmpty()) {
                 throw new ResourceNotFoundException("No adverts found with: " + query);
             } else {
-                return AdvertisementMapper.toDtoList(advertToDtoList);
+                return AdvertisementMapper.toDtoList(advertToDtoList, storageService);
             }
         } else {
             throw new ResourceNotFoundException("No adverts found with: " + query);
         }
     }
 
-    public List<AdvertisementProjectionOutputDto> getAllAdvertisements() {
+    public List<AdvertisementProjectionOutputDto> getAllAdvertisements() throws IOException {
         Optional<List<AdvertisementSummary>> advertisements = advertisementRepos.findAllProjectedBy();
         if (advertisements.isPresent()) {
             List<AdvertisementSummary> advertToDtoList = advertisements.stream()
@@ -71,7 +72,7 @@ public class AdvertisementService {
             if (advertToDtoList.isEmpty()) {
                 throw new ResourceNotFoundException("No adverts found");
             } else {
-                return AdvertisementMapper.projectionToDtoList(advertToDtoList);
+                return AdvertisementMapper.projectionToDtoList(advertToDtoList, storageService);
             }
         } else {
             throw new ResourceNotFoundException("No adverts found");
@@ -134,7 +135,7 @@ public class AdvertisementService {
             if (advertToDtoList.isEmpty()) {
                 throw new ResourceNotFoundException("No adverts found with these parameters");
             } else {
-                return AdvertisementMapper.toDtoList(advertToDtoList);
+                return AdvertisementMapper.toDtoList(advertToDtoList, storageService);
             }
         } else {
             throw new ResourceNotFoundException("No adverts found with these parameters");
@@ -149,7 +150,7 @@ public class AdvertisementService {
             catList.add(cat.get());
             Optional<List<Advertisement>> items = advertisementRepos.getAdvertisementsByCategories(catList);
             if (items.isPresent()) {
-                return AdvertisementMapper.toDtoList(items.get());
+                return AdvertisementMapper.toDtoList(items.get(), storageService);
             } else {
                 throw new ResourceNotFoundException("No adverts found");
             }
@@ -161,7 +162,9 @@ public class AdvertisementService {
     public AdvertisementOutputDto getAdvertisementById(@Valid long id) {
         Optional<Advertisement> advertisement = advertisementRepos.findByAdvertisementId(id);
         if (advertisement.isPresent()) {
-            return AdvertisementMapper.toDto(advertisement.get());
+            AdvertisementOutputDto advertisementOutputDto = AdvertisementMapper.toDto(advertisement.get());
+            advertisementOutputDto.setImage(storageService.loadAsResource(advertisement.get().getImage()));
+            return advertisementOutputDto;
         } else {
             throw new ResourceNotFoundException("No adverts found");
         }

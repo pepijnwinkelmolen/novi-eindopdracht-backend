@@ -1,18 +1,19 @@
 package com.demo.novieindopdracht.controllers;
 
-import com.demo.novieindopdracht.dtos.AdvertisementInputDto;
-import com.demo.novieindopdracht.dtos.AdvertisementOutputDto;
-import com.demo.novieindopdracht.dtos.AdvertisementProjectionOutputDto;
+import com.demo.novieindopdracht.dtos.*;
+import com.demo.novieindopdracht.mappers.AdvertisementMapper;
 import com.demo.novieindopdracht.services.AdvertisementService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
@@ -31,44 +32,52 @@ public class AdvertisementController {
 
     //done
     @GetMapping
-    public ResponseEntity<List<AdvertisementProjectionOutputDto>> getAdvertisements() {
+    public ResponseEntity<List<AdvertisementProjectionWithImageDto>> getAdvertisements() throws IOException {
         List<AdvertisementProjectionOutputDto> items = advertisementService.getAllAdvertisements();
-        return new ResponseEntity<>(items, HttpStatus.OK);
+        List<AdvertisementProjectionWithImageDto> advertisementProjectionWithImageDtoList = AdvertisementMapper.toProjectionImageDtoList(items);
+        return new ResponseEntity<>(advertisementProjectionWithImageDtoList, HttpStatus.OK);
     }
 
     //done
     @GetMapping("/search")
-    public ResponseEntity<List<AdvertisementOutputDto>> getSearchedAdvertisements(@RequestParam(name="query") @Valid @Size(min = 3, max = 20)
-                                                                                      @Pattern(regexp = "^[A-Za-z0-9_]+$", message = "Not a valid input") String query) {
+    public ResponseEntity<List<AdvertisementWithImageDto>> getSearchedAdvertisements(@RequestParam(name="query") @Valid @Size(min = 3, max = 20)
+                                                                                      @Pattern(regexp = "^[A-Za-z0-9_]+$", message = "Not a valid input") String query) throws IOException {
         List<AdvertisementOutputDto> items = advertisementService.getAllAdvertisementsLikeQuery(query);
-        return new ResponseEntity<>(items, HttpStatus.OK);
+        List<AdvertisementWithImageDto> advertisementWithImageDtoList = AdvertisementMapper.toImageDtoList(items);
+        return new ResponseEntity<>(advertisementWithImageDtoList, HttpStatus.OK);
     }
 
     //done
     @GetMapping("/filter")
-    public ResponseEntity<List<AdvertisementOutputDto>> getFilteredAdvertisements(@RequestParam(name="price") @Valid @Min(0) @Max(100) Double price,
+    public ResponseEntity<List<AdvertisementWithImageDto>> getFilteredAdvertisements(@RequestParam(name="price") @Valid @Min(0) @Max(100) Double price,
                                                        @RequestParam(name="since", required = false) @Valid String since,
-                                                       @RequestParam(name="has-to-go", required = false) @Valid String hasToGo) {
+                                                       @RequestParam(name="has-to-go", required = false) @Valid String hasToGo) throws IOException {
         List<AdvertisementOutputDto> items = advertisementService.getAllAdvertisementsWithFilter(price, since, hasToGo);
-        return new ResponseEntity<>(items, HttpStatus.OK);
+        List<AdvertisementWithImageDto> advertisementWithImageDtoList = AdvertisementMapper.toImageDtoList(items);
+        return new ResponseEntity<>(advertisementWithImageDtoList, HttpStatus.OK);
     }
 
     //done
     @GetMapping("/{id}")
-    public ResponseEntity<AdvertisementOutputDto> getAdvertisementById(@PathVariable(name = "id") @Valid long id) {
+    public ResponseEntity<Object> getAdvertisementById(@PathVariable(name = "id") @Valid long id) throws IOException {
         AdvertisementOutputDto item = advertisementService.getAdvertisementById(id);
-        return new ResponseEntity<>(item, HttpStatus.OK);
+        AdvertisementWithImageDto advertisementWithImageDto = AdvertisementMapper.toImageDto(item);
+
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + item.image.getFilename())
+                .body(advertisementWithImageDto);
     }
 
     //done
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<AdvertisementOutputDto>> getAdvertisementsByCategory(@PathVariable(name = "category") @Valid String category) {
-        System.out.println(category);
+    public ResponseEntity<List<AdvertisementWithImageDto>> getAdvertisementsByCategory(@PathVariable(name = "category") @Valid String category) throws IOException {
         List<AdvertisementOutputDto> items = advertisementService.getAllAdvertisementsByCategory(category);
-        return new ResponseEntity<>(items, HttpStatus.OK);
+        List<AdvertisementWithImageDto> advertisementWithImageDtoList = AdvertisementMapper.toImageDtoList(items);
+        return new ResponseEntity<>(advertisementWithImageDtoList, HttpStatus.OK);
     }
 
-    //needs to be created
+    //done
     @Transactional
     @PostMapping
     public ResponseEntity<String> createAdvert(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token,
@@ -78,10 +87,10 @@ public class AdvertisementController {
                 .path("/product/")
                 .path(Objects.requireNonNull(id.toString()))
                 .toUriString();
-        return ResponseEntity.created(URI.create(url)).body("Uw advertentie is aangemaakt.");
+        return ResponseEntity.created(URI.create(url)).body("Uw advertentie is aangemaakt. ID = " + id);
     }
 
-    //done
+    //done, needs to remove related image from server
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAdvert(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @PathVariable(name = "id") @Valid long id) {
