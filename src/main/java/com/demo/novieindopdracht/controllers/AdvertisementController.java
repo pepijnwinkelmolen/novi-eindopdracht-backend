@@ -49,7 +49,7 @@ public class AdvertisementController {
 
     //done
     @GetMapping("/filter")
-    public ResponseEntity<List<AdvertisementWithImageDto>> getFilteredAdvertisements(@RequestParam(name="price") @Valid @Min(0) @Max(100) Double price,
+    public ResponseEntity<List<AdvertisementWithImageDto>> getFilteredAdvertisements(@RequestParam(name="price") @Valid @Min(0) @Max(250) Double price,
                                                        @RequestParam(name="since", required = false) @Valid String since,
                                                        @RequestParam(name="has-to-go", required = false) @Valid String hasToGo) throws IOException {
         List<AdvertisementOutputDto> items = advertisementService.getAllAdvertisementsWithFilter(price, since, hasToGo);
@@ -90,7 +90,7 @@ public class AdvertisementController {
         return ResponseEntity.created(URI.create(url)).body("Uw advertentie is aangemaakt. ID = " + id);
     }
 
-    //done, needs to remove related image from server
+    //done
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAdvert(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @PathVariable(name = "id") @Valid long id) {

@@ -84,7 +84,6 @@ public class AdvertisementService {
         if (price.isNaN() || price.isInfinite()) {
             throw new BadRequestException("Bad request on price: " + price);
         } else {
-            price = price * 10.0;
             if (hasToGo == null) {
                 if (Objects.equals(since, "today")) {
                     LocalDate checkDate = LocalDate.now();
@@ -143,7 +142,6 @@ public class AdvertisementService {
     }
 
     public List<AdvertisementOutputDto> getAllAdvertisementsByCategory(@Valid String category) {
-        System.out.println(category);
         Optional<Category> cat = categoryRepository.findByTitle(category);
         if(cat.isPresent()) {
             List<Category> catList = new ArrayList<>();

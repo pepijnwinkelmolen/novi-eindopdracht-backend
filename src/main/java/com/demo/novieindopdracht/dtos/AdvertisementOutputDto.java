@@ -1,7 +1,5 @@
 package com.demo.novieindopdracht.dtos;
 
-import org.springframework.core.io.Resource;
-
 import java.time.LocalDate;
 
 public class AdvertisementOutputDto {
