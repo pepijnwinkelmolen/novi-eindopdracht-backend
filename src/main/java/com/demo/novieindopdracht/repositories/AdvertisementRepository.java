@@ -1,6 +1,7 @@
 package com.demo.novieindopdracht.repositories;
 
 import com.demo.novieindopdracht.models.Advertisement;
+import com.demo.novieindopdracht.models.Category;
 import com.demo.novieindopdracht.projections.AdvertisementSummary;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -30,5 +31,5 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, St
     @Transactional
     void deleteByAdvertisementId(@Valid long id);
 
-    Optional<List<Advertisement>> getAdvertisementsByCategoryId(Long categoryId);
+    Optional<List<Advertisement>> getAdvertisementsByCategories(List<Category> categories);
 }

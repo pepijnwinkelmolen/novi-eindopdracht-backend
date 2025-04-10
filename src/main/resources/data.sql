@@ -55,5 +55,5 @@ insert into categories(parent_id, title) values (47, 'Makeup');
 insert into categories(parent_id, title) values (47, 'Huidverzorging');
 insert into categories(parent_id, title) values (47, 'Haarstijlproducten');
 insert into categories(parent_id, title) values (47, 'Scheerproducten');
-insert into advertisements(category_id, user_id, title, description, price, image, details, state, date, has_to_go) values (1, 1, 'titel', null, 50.0, null, null, null, null,null);
-insert into advertisements(category_id, user_id, title, description, price, image, details, state, date, has_to_go) values (1, 1, 'andere titel', null, 100.0, null, null, null, null,'checked');
+insert into advertisements(user_id, title, description, price, image, details, state, date, has_to_go) values (1, 'titel', null, 50.0, '1.png', null, null, null,'checked');
+insert into advertisements(user_id, title, description, price, image, details, state, date, has_to_go) values (1, 'andere titel', null, 100.0, '1.png', null, null, null,'checked');
