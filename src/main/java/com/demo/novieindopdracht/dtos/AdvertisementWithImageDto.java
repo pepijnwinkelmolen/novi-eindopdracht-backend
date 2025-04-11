@@ -1,6 +1,7 @@
 package com.demo.novieindopdracht.dtos;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class AdvertisementWithImageDto {
     public Long advertisementId;
@@ -12,4 +13,14 @@ public class AdvertisementWithImageDto {
     public String state;
     public LocalDate date;
     public String hasToGo;
+    public List<BidOutputDto> bids;
+    public Long userId;
+
+    public List<BidOutputDto> getBids() {
+        return bids;
+    }
+
+    public void setBids(List<BidOutputDto> bids) {
+        this.bids = bids;
+    }
 }
