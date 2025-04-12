@@ -3,7 +3,7 @@ package com.demo.novieindopdracht.services;
 import com.demo.novieindopdracht.dtos.ProfileOutputDto;
 import com.demo.novieindopdracht.exceptions.BadRequestException;
 import com.demo.novieindopdracht.exceptions.ResourceNotFoundException;
-import com.demo.novieindopdracht.helpers.validateUser;
+import com.demo.novieindopdracht.helpers.ValidateUser;
 import com.demo.novieindopdracht.mappers.ProfileMapper;
 import com.demo.novieindopdracht.models.Profile;
 import com.demo.novieindopdracht.models.Role;
@@ -35,7 +35,7 @@ public class ProfileService {
 
     public ProfileOutputDto getProfile(@Valid @NotNull @NotBlank String token, @NotNull Long id) {
         try {
-            if (validateUser.validateUserWithToken(token, jwtService, userRepository)) {
+            if (ValidateUser.validateUserWithToken(token, jwtService, userRepository)) {
                 token = token.replace("Bearer ", "");
                 Optional<User> opUser = userRepository.findByUsername(jwtService.extractUsername(token));
                 if (opUser.isPresent()) {

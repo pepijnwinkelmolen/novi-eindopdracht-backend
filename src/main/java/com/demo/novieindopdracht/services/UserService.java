@@ -4,7 +4,7 @@ import com.demo.novieindopdracht.dtos.NewUserDto;
 import com.demo.novieindopdracht.dtos.UserOutputDto;
 import com.demo.novieindopdracht.exceptions.BadRequestException;
 import com.demo.novieindopdracht.exceptions.ResourceNotFoundException;
-import com.demo.novieindopdracht.helpers.validateUser;
+import com.demo.novieindopdracht.helpers.ValidateUser;
 import com.demo.novieindopdracht.mappers.ProfileMapper;
 import com.demo.novieindopdracht.mappers.UserMapper;
 import com.demo.novieindopdracht.models.Profile;
@@ -84,7 +84,7 @@ public class UserService {
     public void setNewPassword(@Valid @NotNull @NotBlank String token, String password) {
         try {
             if (password.matches("^[A-Za-z0-9_]+$")) {
-                if (validateUser.validateUserWithToken(token, jwtService, userRepos)) {
+                if (ValidateUser.validateUserWithToken(token, jwtService, userRepos)) {
                     token = token.replace("Bearer ", "");
                     Optional<User> opUser = userRepos.findByUsername(jwtService.extractUsername(token));
                     if (opUser.isPresent()) {
@@ -109,7 +109,7 @@ public class UserService {
     public void setNewUsername(@Valid @NotNull @NotBlank String token, String username) {
         try {
             if (username.matches("^[A-Za-z0-9_]+$")) {
-                if (validateUser.validateUserWithToken(token, jwtService, userRepos)) {
+                if (ValidateUser.validateUserWithToken(token, jwtService, userRepos)) {
                     Optional<User> usernameChecker = userRepos.findByUsername(username);
                     if(usernameChecker.isEmpty()) {
                         token = token.replace("Bearer ", "");
@@ -137,7 +137,7 @@ public class UserService {
 
     @Transactional
     public void deleteUserById(@Valid @NotNull @NotBlank String token, @Valid long id) {
-        if(validateUser.validateUserWithToken(token, jwtService, userRepos)) {
+        if(ValidateUser.validateUserWithToken(token, jwtService, userRepos)) {
             token = token.replace("Bearer ", "");
             String username = jwtService.extractUsername(token);
             Optional<User> currentUser = userRepos.findByUsername(username);

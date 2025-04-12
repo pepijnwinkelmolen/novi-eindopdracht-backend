@@ -5,7 +5,7 @@ import com.demo.novieindopdracht.dtos.AdvertisementOutputDto;
 import com.demo.novieindopdracht.dtos.AdvertisementProjectionOutputDto;
 import com.demo.novieindopdracht.exceptions.BadRequestException;
 import com.demo.novieindopdracht.exceptions.ResourceNotFoundException;
-import com.demo.novieindopdracht.helpers.validateUser;
+import com.demo.novieindopdracht.helpers.ValidateUser;
 import com.demo.novieindopdracht.mappers.AdvertisementMapper;
 import com.demo.novieindopdracht.models.Advertisement;
 import com.demo.novieindopdracht.models.Category;
@@ -170,7 +170,7 @@ public class AdvertisementService {
 
     @Transactional
     public void deleteAdvert(@Valid @NotNull @NotBlank String token, @Valid long id) {
-        if(validateUser.validateUserWithToken(token, jwtService, userRepos)) {
+        if(ValidateUser.validateUserWithToken(token, jwtService, userRepos)) {
             token = token.replace("Bearer ", "");
             String username = jwtService.extractUsername(token);
             Optional<User> currentUser = userRepos.findByUsername(username);
@@ -209,7 +209,7 @@ public class AdvertisementService {
     @Transactional
     public Long createAdvert(@Valid @NotNull @NotBlank String token, @Valid AdvertisementInputDto advertisementInputDto) {
         try {
-            if(validateUser.validateUserWithToken(token, jwtService, userRepos)) {
+            if(ValidateUser.validateUserWithToken(token, jwtService, userRepos)) {
                 token = token.replace("Bearer ", "");
                 String username = jwtService.extractUsername(token);
                 Optional<User> currentUser = userRepos.findByUsername(username);
