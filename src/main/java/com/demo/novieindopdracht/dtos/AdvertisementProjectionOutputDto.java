@@ -9,4 +9,6 @@ public class AdvertisementProjectionOutputDto {
     public void setImage(org.springframework.core.io.Resource image) {
         this.image = image;
     }
+
+
 }

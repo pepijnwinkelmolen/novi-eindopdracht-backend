@@ -34,6 +34,8 @@ public class AdvertisementMapper {
         advertisementOutputDto.state = advertisement.getState();
         advertisementOutputDto.date = advertisement.getDate();
         advertisementOutputDto.hasToGo = advertisement.getHasToGo();
+        advertisementOutputDto.userId = advertisement.getUser().getUserId();
+        advertisementOutputDto.setBids(BidMapper.toDtoList(advertisement.getBids()));
 
         return advertisementOutputDto;
     }
@@ -49,6 +51,9 @@ public class AdvertisementMapper {
         advertisementWithImageDto.state = advertisementOutputDto.state;
         advertisementWithImageDto.date = advertisementOutputDto.date;
         advertisementWithImageDto.hasToGo = advertisementOutputDto.hasToGo;
+        advertisementWithImageDto.userId = advertisementOutputDto.userId;
+        advertisementWithImageDto.setBids(advertisementOutputDto.getBids());
+
         return advertisementWithImageDto;
     }
 

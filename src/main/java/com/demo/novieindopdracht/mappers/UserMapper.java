@@ -2,6 +2,7 @@ package com.demo.novieindopdracht.mappers;
 
 import com.demo.novieindopdracht.dtos.NewUserDto;
 import com.demo.novieindopdracht.dtos.UserOutputDto;
+import com.demo.novieindopdracht.models.Role;
 import com.demo.novieindopdracht.models.User;
 
 public class UserMapper {
@@ -9,6 +10,7 @@ public class UserMapper {
         UserOutputDto userOutputDto = new UserOutputDto();
         userOutputDto.userId = user.getUserId();
         userOutputDto.username = user.getUsername();
+        userOutputDto.roles = user.getRoles().stream().map(Role::getRole).toList();
         return userOutputDto;
     }
 

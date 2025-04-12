@@ -23,7 +23,7 @@ public class Advertisement {
     private String state;
     private LocalDate date = LocalDate.now();
     private String hasToGo;
-    @OneToMany(mappedBy = "advertisement")
+    @OneToMany(mappedBy = "advertisement", cascade = {CascadeType.ALL})
     List<Bid> bids;
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
