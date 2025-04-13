@@ -1,5 +1,5 @@
 insert into profiles(email, phone_number, residence) values ('email@hotmail.com', '0623890342', 'Groeningen');
-insert into users(username, password, profile_id) values ('pipje', '$2a$12$GcbQlWzYl6xf1DbXTipSzOe2qrDKLj.TRxgDIDQoizHJ8bJoBLjlW', 1);
+insert into users(username, password, profile_id) values ('adminuser', '$2a$12$GcbQlWzYl6xf1DbXTipSzOe2qrDKLj.TRxgDIDQoizHJ8bJoBLjlW', 1);
 insert into roles(role) values ('ROLE_USER'), ('ROLE_ADMIN');
 insert into users_roles(user_id, role) values ('1', 'ROLE_USER');
 insert into users_roles(user_id, role) values ('1', 'ROLE_ADMIN');
@@ -55,5 +55,5 @@ insert into categories(parent_id, title) values (47, 'Makeup');
 insert into categories(parent_id, title) values (47, 'Huidverzorging');
 insert into categories(parent_id, title) values (47, 'Haarstijlproducten');
 insert into categories(parent_id, title) values (47, 'Scheerproducten');
-insert into advertisements(user_id, title, description, price, image, details, state, date, has_to_go) values (1, 'titel', null, 50.0, '1.png', null, null, null,'checked');
+insert into advertisements(user_id, title, description, price, image, details, state, date, has_to_go) values (1, 'mooie titel', null, 50.0, '1.png', null, null, null,'checked');
 insert into advertisements(user_id, title, description, price, image, details, state, date, has_to_go) values (1, 'andere titel', null, 100.0, '1.png', null, null, null,'checked');

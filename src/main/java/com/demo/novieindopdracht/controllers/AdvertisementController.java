@@ -62,7 +62,6 @@ public class AdvertisementController {
     public ResponseEntity<Object> getAdvertisementById(@PathVariable(name = "id") @Valid long id) throws IOException {
         AdvertisementOutputDto item = advertisementService.getAdvertisementById(id);
         AdvertisementWithImageDto advertisementWithImageDto = AdvertisementMapper.toImageDto(item);
-
         return ResponseEntity
                 .ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline;fileName=" + item.image.getFilename())
@@ -82,6 +81,7 @@ public class AdvertisementController {
     @PostMapping
     public ResponseEntity<String> createAdvert(@RequestHeader(name = "Authorization") @Valid @NotBlank String token,
                                                                @ModelAttribute AdvertisementInputDto advertisementInputDto) {
+        System.out.println(advertisementInputDto.category);
         Long id = advertisementService.createAdvert(token, advertisementInputDto);
         String url = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/product/")
