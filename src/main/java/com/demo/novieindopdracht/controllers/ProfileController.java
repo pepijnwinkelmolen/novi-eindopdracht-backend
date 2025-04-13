@@ -22,7 +22,7 @@ public class ProfileController {
 
     //done
     @GetMapping("/{id}")
-    public ResponseEntity<ProfileOutputDto> getProfile(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @PathVariable @NotNull Long id) {
+    public ResponseEntity<ProfileOutputDto> getProfile(@RequestHeader(name = "Authorization") @Valid @NotBlank String token, @PathVariable @NotNull Long id) {
         ProfileOutputDto profileOutputDto = profileService.getProfile(token, id);
         return new ResponseEntity<>(profileOutputDto, HttpStatus.OK);
     }

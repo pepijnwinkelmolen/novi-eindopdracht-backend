@@ -1,6 +1,8 @@
 package com.demo.novieindopdracht.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name="bids")
@@ -15,14 +17,12 @@ public class Bid {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "advertisement_id")
     Advertisement advertisement;
+    @NotNull
+    @Min(1)
     private Double price;
 
     public Long getBidId() {
         return bidId;
-    }
-
-    public void setBidId(Long bidId) {
-        this.bidId = bidId;
     }
 
     public User getUser() {

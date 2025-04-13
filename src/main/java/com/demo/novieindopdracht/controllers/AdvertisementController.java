@@ -80,7 +80,7 @@ public class AdvertisementController {
     //done
     @Transactional
     @PostMapping
-    public ResponseEntity<String> createAdvert(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token,
+    public ResponseEntity<String> createAdvert(@RequestHeader(name = "Authorization") @Valid @NotBlank String token,
                                                                @ModelAttribute AdvertisementInputDto advertisementInputDto) {
         Long id = advertisementService.createAdvert(token, advertisementInputDto);
         String url = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -93,7 +93,7 @@ public class AdvertisementController {
     //done
     @Transactional
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAdvert(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @PathVariable(name = "id") @Valid long id) {
+    public ResponseEntity<?> deleteAdvert(@RequestHeader(name = "Authorization") @Valid @NotBlank String token, @PathVariable(name = "id") @Valid long id) {
         advertisementService.deleteAdvert(token, id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

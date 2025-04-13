@@ -2,6 +2,7 @@ package com.demo.novieindopdracht.services;
 
 import com.demo.novieindopdracht.dtos.NewUserDto;
 import com.demo.novieindopdracht.dtos.UserOutputDto;
+import com.demo.novieindopdracht.exceptions.AuthenticationException;
 import com.demo.novieindopdracht.exceptions.BadRequestException;
 import com.demo.novieindopdracht.helpers.ValidateUser;
 import com.demo.novieindopdracht.models.Profile;
@@ -281,7 +282,7 @@ class UserServiceTest {
     @Test
     void userTriesToDeleteButUsesInvalidToken() {
         // Arrange
-        String rawToken = "Bearer invalidToken";
+        String rawToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXBqZSIsImlhdCI6MTc0NDMwOTM5MywiZXhwIjoxNzQ1MTczMzkzfQ.qxu4HzuwBm0vSBJ4hHnSvvAnOmAm3h1UuzYMW3ERWeU";
         long userId = 1L;
 
         try (MockedStatic<ValidateUser> validateUserMock = Mockito.mockStatic(ValidateUser.class)) {
@@ -289,7 +290,7 @@ class UserServiceTest {
                     .when(() -> ValidateUser.validateUserWithToken(rawToken, jwtService, userRepository))
                     .thenReturn(false);
             // Act & Assert
-            BadRequestException thrown = assertThrows(BadRequestException.class, () ->
+            AuthenticationException thrown = assertThrows(AuthenticationException.class, () ->
                     userService.deleteUserById(rawToken, userId));
 
             assertEquals("User unauthorized", thrown.getMessage());
@@ -300,8 +301,8 @@ class UserServiceTest {
     @Test
     void loggedInUserNotFound() {
         // Arrange
-        String rawToken = "Bearer validToken";
-        String cleanToken = "validToken";
+        String rawToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXBqZSIsImlhdCI6MTc0NDMwOTM5MywiZXhwIjoxNzQ1MTczMzkzfQ.qxu4HzuwBm0vSBJ4hHnSvvAnOmAm3h1UuzYMW3ERWeU";
+        String cleanToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXBqZSIsImlhdCI6MTc0NDMwOTM5MywiZXhwIjoxNzQ1MTczMzkzfQ.qxu4HzuwBm0vSBJ4hHnSvvAnOmAm3h1UuzYMW3ERWeU";
         long userId = 1L;
 
         when(jwtService.extractUsername(cleanToken)).thenReturn("emptyUser");
@@ -318,8 +319,8 @@ class UserServiceTest {
     @Test
     void targetUserNotFound() {
         // Arrange
-        String token = "Bearer validToken";
-        String cleanToken = "validToken";
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXBqZSIsImlhdCI6MTc0NDMwOTM5MywiZXhwIjoxNzQ1MTczMzkzfQ.qxu4HzuwBm0vSBJ4hHnSvvAnOmAm3h1UuzYMW3ERWeU";
+        String cleanToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXBqZSIsImlhdCI6MTc0NDMwOTM5MywiZXhwIjoxNzQ1MTczMzkzfQ.qxu4HzuwBm0vSBJ4hHnSvvAnOmAm3h1UuzYMW3ERWeU";
         long targetUserId = 999L;
 
         User currentUser = new User();
@@ -349,8 +350,8 @@ class UserServiceTest {
     @Test
     void tokenUserAndIdUserMismatch() {
         // Arrange
-        String token = "Bearer validToken";
-        String cleanToken = "validToken";
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXBqZSIsImlhdCI6MTc0NDMwOTM5MywiZXhwIjoxNzQ1MTczMzkzfQ.qxu4HzuwBm0vSBJ4hHnSvvAnOmAm3h1UuzYMW3ERWeU";
+        String cleanToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXBqZSIsImlhdCI6MTc0NDMwOTM5MywiZXhwIjoxNzQ1MTczMzkzfQ.qxu4HzuwBm0vSBJ4hHnSvvAnOmAm3h1UuzYMW3ERWeU";
         long targetUserId = 42L;
 
         User currentUser = new User();

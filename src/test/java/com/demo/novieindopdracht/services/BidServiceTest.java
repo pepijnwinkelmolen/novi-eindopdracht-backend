@@ -1,6 +1,6 @@
 package com.demo.novieindopdracht.services;
 
-import com.demo.novieindopdracht.exceptions.BadRequestException;
+import com.demo.novieindopdracht.exceptions.AuthenticationException;
 import com.demo.novieindopdracht.exceptions.ResourceNotFoundException;
 import com.demo.novieindopdracht.helpers.ValidateUser;
 import com.demo.novieindopdracht.models.Advertisement;
@@ -48,8 +48,8 @@ class BidServiceTest {
     @Test
     void userSuccessfullyCreatesBidOnAdvert() {
         // Arrange
-        String token = "Bearer validToken";
-        String cleanToken = "validToken";
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXBqZSIsImlhdCI6MTc0NDMwOTM5MywiZXhwIjoxNzQ1MTczMzkzfQ.qxu4HzuwBm0vSBJ4hHnSvvAnOmAm3h1UuzYMW3ERWeU";
+        String cleanToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXBqZSIsImlhdCI6MTc0NDMwOTM5MywiZXhwIjoxNzQ1MTczMzkzfQ.qxu4HzuwBm0vSBJ4hHnSvvAnOmAm3h1UuzYMW3ERWeU";
         double bidValue = 50.0;
         long advertId = 1L;
 
@@ -87,7 +87,7 @@ class BidServiceTest {
     @Test
     void userInputWithInvalidToken() {
         // Arrange
-        String token = "Bearer fakeToken";
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXBqZSIsImlhdCI6MTc0NDMwOTM5MywiZXhwIjoxNzQ1MTczMzkzfQ.qxu4HzuwBm0vSBJ4hHnSvvAnOmAm3h1UuzYMW3ERWeU";
 
         try (MockedStatic<ValidateUser> mockStatic = Mockito.mockStatic(ValidateUser.class)) {
             mockStatic
@@ -95,18 +95,18 @@ class BidServiceTest {
                     .thenReturn(false);
 
             // Act & Assert
-            BadRequestException thrown = assertThrows(BadRequestException.class, () ->
+            AuthenticationException thrown = assertThrows(AuthenticationException.class, () ->
                     bidService.createBidOnAdvert(token, 100.0, 1L));
 
-            assertEquals("Invalid token", thrown.getMessage());
+            assertEquals("User unauthorized", thrown.getMessage());
         }
     }
 
     @Test
     void userNotFound() {
         // Arrange
-        String token = "Bearer validToken";
-        String cleanToken = "validToken";
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXBqZSIsImlhdCI6MTc0NDMwOTM5MywiZXhwIjoxNzQ1MTczMzkzfQ.qxu4HzuwBm0vSBJ4hHnSvvAnOmAm3h1UuzYMW3ERWeU";
+        String cleanToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXBqZSIsImlhdCI6MTc0NDMwOTM5MywiZXhwIjoxNzQ1MTczMzkzfQ.qxu4HzuwBm0vSBJ4hHnSvvAnOmAm3h1UuzYMW3ERWeU";
 
         try (MockedStatic<ValidateUser> mockStatic = Mockito.mockStatic(ValidateUser.class)) {
             mockStatic
@@ -128,8 +128,8 @@ class BidServiceTest {
     @Test
     void advertisementNotFound() {
         // Arrange
-        String rawToken = "Bearer validToken";
-        String cleanToken = "validToken";
+        String rawToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXBqZSIsImlhdCI6MTc0NDMwOTM5MywiZXhwIjoxNzQ1MTczMzkzfQ.qxu4HzuwBm0vSBJ4hHnSvvAnOmAm3h1UuzYMW3ERWeU";
+        String cleanToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXBqZSIsImlhdCI6MTc0NDMwOTM5MywiZXhwIjoxNzQ1MTczMzkzfQ.qxu4HzuwBm0vSBJ4hHnSvvAnOmAm3h1UuzYMW3ERWeU";
         long advertId = 123L;
 
         User user = new User();

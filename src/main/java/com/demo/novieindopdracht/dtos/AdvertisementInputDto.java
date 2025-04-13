@@ -1,28 +1,24 @@
 package com.demo.novieindopdracht.dtos;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.web.multipart.MultipartFile;
 
 public class AdvertisementInputDto {
+    @NotBlank
     public String category;
+    @NotBlank
+    @Size(min = 6, max = 30)
     public String title;
     public String description;
+    @NotNull
     public Double price;
+    @NotNull
     public MultipartFile image;
     public String details;
     public String state;
     public String hasToGo;
-
-    public void logData() {
-        System.out.println(category + title + description + price + image + details + state);
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
 
     public String getTitle() {
         return title;
@@ -30,14 +26,6 @@ public class AdvertisementInputDto {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Double getPrice() {
@@ -54,29 +42,5 @@ public class AdvertisementInputDto {
 
     public void setImage(MultipartFile image) {
         this.image = image;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getHasToGo() {
-        return hasToGo;
-    }
-
-    public void setHasToGo(String hasToGo) {
-        this.hasToGo = hasToGo;
     }
 }

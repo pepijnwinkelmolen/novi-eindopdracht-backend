@@ -1,6 +1,5 @@
 package com.demo.novieindopdracht.security;
 
-
 import com.demo.novieindopdracht.models.Role;
 import com.demo.novieindopdracht.models.User;
 import org.springframework.security.core.GrantedAuthority;

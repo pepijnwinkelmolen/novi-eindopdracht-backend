@@ -1,6 +1,6 @@
 package com.demo.novieindopdracht.services;
 
-import com.demo.novieindopdracht.exceptions.BadRequestException;
+import com.demo.novieindopdracht.exceptions.AuthenticationException;
 import com.demo.novieindopdracht.exceptions.ResourceNotFoundException;
 import com.demo.novieindopdracht.helpers.ValidateUser;
 import com.demo.novieindopdracht.models.Advertisement;
@@ -56,7 +56,7 @@ public class BidService {
                 throw new ResourceNotFoundException("Invalid user");
             }
         } else {
-            throw new BadRequestException("Invalid token");
+            throw new AuthenticationException("User unauthorized");
         }
     }
 }

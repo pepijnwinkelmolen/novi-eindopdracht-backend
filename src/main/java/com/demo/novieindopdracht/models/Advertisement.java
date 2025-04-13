@@ -1,6 +1,9 @@
 package com.demo.novieindopdracht.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,9 +18,13 @@ public class Advertisement {
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
+    @NotBlank
+    @Size(min = 6, max = 30)
     private String title;
     private String description;
+    @NotNull
     private Double price;
+    @NotNull
     private String image;
     private String details;
     private String state;
@@ -105,10 +112,6 @@ public class Advertisement {
         this.state = state;
     }
 
-    public List<Category> getCategories() {
-        return categories;
-    }
-
     public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
@@ -117,15 +120,7 @@ public class Advertisement {
         return date;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
     public String getHasToGo() {
         return hasToGo;
-    }
-
-    public void setHasToGo(String hasToGo) {
-        this.hasToGo = hasToGo;
     }
 }

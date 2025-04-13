@@ -20,7 +20,7 @@ public class BidController {
 
     //needs to be made
     @PostMapping("/{value}/advertisement/{id}")
-    public ResponseEntity<?> createBidOnAdvert(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token,
+    public ResponseEntity<?> createBidOnAdvert(@RequestHeader(name = "Authorization") @Valid @NotBlank String token,
                                                @PathVariable @NotNull Long id,
                                                @PathVariable @NotNull @Max(999999999) @Min(1) Double value) {
         bidService.createBidOnAdvert(token, value, id);
