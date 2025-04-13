@@ -3,9 +3,10 @@ package com.demo.novieindopdracht.services;
 import com.demo.novieindopdracht.dtos.AdvertisementInputDto;
 import com.demo.novieindopdracht.dtos.AdvertisementOutputDto;
 import com.demo.novieindopdracht.dtos.AdvertisementProjectionOutputDto;
+import com.demo.novieindopdracht.exceptions.AuthenticationException;
 import com.demo.novieindopdracht.exceptions.BadRequestException;
 import com.demo.novieindopdracht.exceptions.ResourceNotFoundException;
-import com.demo.novieindopdracht.helpers.validateUser;
+import com.demo.novieindopdracht.helpers.ValidateUser;
 import com.demo.novieindopdracht.mappers.AdvertisementMapper;
 import com.demo.novieindopdracht.models.Advertisement;
 import com.demo.novieindopdracht.models.Category;
@@ -170,7 +171,7 @@ public class AdvertisementService {
 
     @Transactional
     public void deleteAdvert(@Valid @NotNull @NotBlank String token, @Valid long id) {
-        if(validateUser.validateUserWithToken(token, jwtService, userRepos)) {
+        if(ValidateUser.validateUserWithToken(token, jwtService, userRepos)) {
             token = token.replace("Bearer ", "");
             String username = jwtService.extractUsername(token);
             Optional<User> currentUser = userRepos.findByUsername(username);
@@ -195,47 +196,43 @@ public class AdvertisementService {
                             throw new BadRequestException("Invalid user");
                         }
                     } else {
-                        throw new BadRequestException("Invalid input");
+                        throw new BadRequestException("Invalid advert");
                     }
                 }
             } else {
-                throw new BadRequestException("Invalid input");
+                throw new BadRequestException("Invalid token");
             }
         } else {
-            throw new BadRequestException("User unauthorized");
+            throw new AuthenticationException("User unauthorized");
         }
     }
 
     @Transactional
     public Long createAdvert(@Valid @NotNull @NotBlank String token, @Valid AdvertisementInputDto advertisementInputDto) {
-        try {
-            if(validateUser.validateUserWithToken(token, jwtService, userRepos)) {
-                token = token.replace("Bearer ", "");
-                String username = jwtService.extractUsername(token);
-                Optional<User> currentUser = userRepos.findByUsername(username);
-                if(currentUser.isPresent()) {
-                    String filename = storageService.store(advertisementInputDto.image);
-                    Advertisement item = AdvertisementMapper.toEntity(advertisementInputDto, filename);
-                    item.setUser(currentUser.get());
-                    item.setImage(filename);
-                    Optional<Category> cat = categoryRepository.findByTitle(advertisementInputDto.category);
-                    if(cat.isPresent()) {
-                        List<Category> catList = new ArrayList<>();
-                        catList.add(cat.get());
-                        item.setCategories(catList);
-                        advertisementRepos.save(item);
-                        return item.getAdvertisementId();
-                    } else {
-                        throw new BadRequestException("Invalid category");
-                    }
+        if(ValidateUser.validateUserWithToken(token, jwtService, userRepos)) {
+            token = token.replace("Bearer ", "");
+            String username = jwtService.extractUsername(token);
+            Optional<User> currentUser = userRepos.findByUsername(username);
+            if(currentUser.isPresent()) {
+                String filename = storageService.store(advertisementInputDto.image);
+                Advertisement item = AdvertisementMapper.toEntity(advertisementInputDto, filename);
+                item.setUser(currentUser.get());
+                item.setImage(filename);
+                Optional<Category> cat = categoryRepository.findByTitle(advertisementInputDto.category);
+                if(cat.isPresent()) {
+                    List<Category> catList = new ArrayList<>();
+                    catList.add(cat.get());
+                    item.setCategories(catList);
+                    advertisementRepos.save(item);
+                    return item.getAdvertisementId();
                 } else {
-                    throw new BadRequestException("Invalid token");
+                    throw new BadRequestException("Invalid category");
                 }
             } else {
                 throw new BadRequestException("Invalid token");
             }
-        } catch (BadRequestException err) {
-            throw new BadRequestException(err.getMessage());
+        } else {
+            throw new AuthenticationException("Invalid token");
         }
     }
 }

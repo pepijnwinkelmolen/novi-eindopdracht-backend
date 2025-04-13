@@ -2,9 +2,10 @@ package com.demo.novieindopdracht.services;
 
 import com.demo.novieindopdracht.dtos.NewUserDto;
 import com.demo.novieindopdracht.dtos.UserOutputDto;
+import com.demo.novieindopdracht.exceptions.AuthenticationException;
 import com.demo.novieindopdracht.exceptions.BadRequestException;
 import com.demo.novieindopdracht.exceptions.ResourceNotFoundException;
-import com.demo.novieindopdracht.helpers.validateUser;
+import com.demo.novieindopdracht.helpers.ValidateUser;
 import com.demo.novieindopdracht.mappers.ProfileMapper;
 import com.demo.novieindopdracht.mappers.UserMapper;
 import com.demo.novieindopdracht.models.Profile;
@@ -60,84 +61,72 @@ public class UserService {
 
     @Transactional
     public void createUser(@Valid @NotNull NewUserDto newUserDto) {
-        try {
-            User user = UserMapper.newUserToEntity(newUserDto);
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            Profile profile = ProfileMapper.newProfileToEntity(newUserDto);
-            profileRepos.save(profile);
-            user.setProfile(profileRepos.findByPhoneNumber(profile.getPhoneNumber()));
-            List<Role> newRoles = new ArrayList<>();
-            Optional<Role> or = roleRepos.findById("ROLE_USER");
-            if (or.isPresent()) {
-                newRoles.add(or.get());
-                user.setRoles(newRoles);
-                userRepos.save(user);
-            } else {
-                throw new BadRequestException("Bad Request");
-            }
-        } catch (Exception e) {
-            throw new BadRequestException(e.getMessage());
+        User user = UserMapper.newUserToEntity(newUserDto);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Profile profile = ProfileMapper.newProfileToEntity(newUserDto);
+        profileRepos.save(profile);
+        user.setProfile(profileRepos.findByPhoneNumber(profile.getPhoneNumber()));
+        List<Role> newRoles = new ArrayList<>();
+        Optional<Role> or = roleRepos.findById("ROLE_USER");
+        if (or.isPresent()) {
+            newRoles.add(or.get());
+            user.setRoles(newRoles);
+            userRepos.save(user);
+        } else {
+            throw new BadRequestException("Bad request");
         }
     }
 
     @Transactional
     public void setNewPassword(@Valid @NotNull @NotBlank String token, String password) {
-        try {
-            if (password.matches("^[A-Za-z0-9_]+$")) {
-                if (validateUser.validateUserWithToken(token, jwtService, userRepos)) {
-                    token = token.replace("Bearer ", "");
-                    Optional<User> opUser = userRepos.findByUsername(jwtService.extractUsername(token));
-                    if (opUser.isPresent()) {
-                        User user = opUser.get();
-                        user.setPassword(passwordEncoder.encode(password));
-                        userRepos.save(user);
-                    } else {
-                        throw new ResourceNotFoundException("Invalid token");
-                    }
+        if (password.matches("^[A-Za-z0-9_]+$")) {
+            if (ValidateUser.validateUserWithToken(token, jwtService, userRepos)) {
+                token = token.replace("Bearer ", "");
+                Optional<User> opUser = userRepos.findByUsername(jwtService.extractUsername(token));
+                if (opUser.isPresent()) {
+                    User user = opUser.get();
+                    user.setPassword(passwordEncoder.encode(password));
+                    userRepos.save(user);
                 } else {
-                    throw new BadRequestException("Invalid token");
+                    throw new ResourceNotFoundException("Invalid token");
                 }
             } else {
-                throw new BadRequestException("Invalid input");
+                throw new AuthenticationException("Invalid token");
             }
-        } catch (Exception err) {
-            throw new BadRequestException(err.getMessage());
+        } else {
+            throw new BadRequestException("Invalid input");
         }
     }
 
     @Transactional
     public void setNewUsername(@Valid @NotNull @NotBlank String token, String username) {
-        try {
-            if (username.matches("^[A-Za-z0-9_]+$")) {
-                if (validateUser.validateUserWithToken(token, jwtService, userRepos)) {
-                    Optional<User> usernameChecker = userRepos.findByUsername(username);
-                    if(usernameChecker.isEmpty()) {
-                        token = token.replace("Bearer ", "");
-                        Optional<User> opUser = userRepos.findByUsername(jwtService.extractUsername(token));
-                        if (opUser.isPresent()) {
-                            User user = opUser.get();
-                            user.setUsername(username);
-                            userRepos.save(user);
-                        } else {
-                            throw new ResourceNotFoundException("Invalid token");
-                        }
+        if (username.matches("^[A-Za-z0-9_]+$")) {
+            if (ValidateUser.validateUserWithToken(token, jwtService, userRepos)) {
+                Optional<User> usernameChecker = userRepos.findByUsername(username);
+                if(usernameChecker.isEmpty()) {
+                    token = token.replace("Bearer ", "");
+                    Optional<User> opUser = userRepos.findByUsername(jwtService.extractUsername(token));
+                    if (opUser.isPresent()) {
+                        User user = opUser.get();
+                        user.setUsername(username);
+                        userRepos.save(user);
                     } else {
-                        throw new BadRequestException("Invalid username");
+                        throw new ResourceNotFoundException("Invalid token");
                     }
                 } else {
-                    throw new BadRequestException("Invalid token");
+                    throw new BadRequestException("Username taken");
                 }
             } else {
-                throw new BadRequestException("Invalid input");
+                throw new AuthenticationException("Invalid token");
             }
-        } catch (Exception err) {
-            throw new BadRequestException(err.getMessage());
+        } else {
+            throw new BadRequestException("Invalid input");
         }
     }
 
     @Transactional
     public void deleteUserById(@Valid @NotNull @NotBlank String token, @Valid long id) {
-        if(validateUser.validateUserWithToken(token, jwtService, userRepos)) {
+        if(ValidateUser.validateUserWithToken(token, jwtService, userRepos)) {
             token = token.replace("Bearer ", "");
             String username = jwtService.extractUsername(token);
             Optional<User> currentUser = userRepos.findByUsername(username);
@@ -172,7 +161,7 @@ public class UserService {
                 throw new BadRequestException("Invalid input");
             }
         } else {
-            throw new BadRequestException("User unauthorized");
+            throw new AuthenticationException("User unauthorized");
         }
     }
 }

@@ -1,8 +1,8 @@
 package com.demo.novieindopdracht.services;
 
-import com.demo.novieindopdracht.exceptions.BadRequestException;
+import com.demo.novieindopdracht.exceptions.AuthenticationException;
 import com.demo.novieindopdracht.exceptions.ResourceNotFoundException;
-import com.demo.novieindopdracht.helpers.validateUser;
+import com.demo.novieindopdracht.helpers.ValidateUser;
 import com.demo.novieindopdracht.models.Advertisement;
 import com.demo.novieindopdracht.models.Bid;
 import com.demo.novieindopdracht.models.User;
@@ -34,7 +34,7 @@ public class BidService {
     }
 
     public void createBidOnAdvert(@Valid @NotNull @NotBlank String token, @NotNull @NotBlank Double value, @NotNull @NotBlank Long id) {
-        if(validateUser.validateUserWithToken(token, jwtService, userRepos)) {
+        if(ValidateUser.validateUserWithToken(token, jwtService, userRepos)) {
             token = token.replace("Bearer ", "");
             String username = jwtService.extractUsername(token);
             Optional<User> currentUser = userRepos.findByUsername(username);
@@ -56,7 +56,7 @@ public class BidService {
                 throw new ResourceNotFoundException("Invalid user");
             }
         } else {
-            throw new BadRequestException("Invalid token");
+            throw new AuthenticationException("User unauthorized");
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.demo.novieindopdracht.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
@@ -12,7 +14,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
     @Column(unique=true)
+    @Size(min = 6, max = 15)
     private String username;
+    @NotBlank
     private String password;
     private String tos;
     private String prPolicy;
@@ -55,16 +59,8 @@ public class User {
         this.password = password;
     }
 
-    public String getTos() {
-        return tos;
-    }
-
     public void setTos(String tos) {
         this.tos = tos;
-    }
-
-    public String getPrpolicy() {
-        return prPolicy;
     }
 
     public void setPrpolicy(String prpolicy) {
@@ -85,21 +81,5 @@ public class User {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
-    }
-
-    public List<Bid> getBids() {
-        return bids;
-    }
-
-    public void setBids(List<Bid> bids) {
-        this.bids = bids;
-    }
-
-    public List<Advertisement> getAdvertisements() {
-        return advertisements;
-    }
-
-    public void setAdvertisements(List<Advertisement> advertisements) {
-        this.advertisements = advertisements;
     }
 }

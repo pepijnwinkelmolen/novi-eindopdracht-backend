@@ -7,7 +7,7 @@ import com.demo.novieindopdracht.security.JwtService;
 
 import java.util.Optional;
 
-public class validateUser {
+public class ValidateUser {
 
     public static boolean validateUserWithToken(String token, JwtService jwtService, UserRepository userRepos) {
         if (token.startsWith("Bearer ")) {

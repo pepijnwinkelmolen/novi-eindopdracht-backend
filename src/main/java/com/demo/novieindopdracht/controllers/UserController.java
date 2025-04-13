@@ -28,7 +28,7 @@ public class UserController {
 
     //done
     @GetMapping("/login")
-    public ResponseEntity<UserOutputDto> loginUser(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token) {
+    public ResponseEntity<UserOutputDto> loginUser(@RequestHeader(name = "Authorization") @Valid @NotBlank String token) {
         UserOutputDto item = userService.loginUser(token);
         return new ResponseEntity<>(item, HttpStatus.OK);
     }
@@ -44,7 +44,7 @@ public class UserController {
     //done
     @Transactional
     @PutMapping("/update/username")
-    public ResponseEntity<?> updateUsername(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @RequestBody @Valid NewUsernameDto newUsernameDto) {
+    public ResponseEntity<?> updateUsername(@RequestHeader(name = "Authorization") @Valid @NotBlank String token, @RequestBody @Valid NewUsernameDto newUsernameDto) {
         userService.setNewUsername(token, newUsernameDto.username);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -52,7 +52,7 @@ public class UserController {
     //done
     @Transactional
     @PutMapping("/update/password")
-    public ResponseEntity<?> updatePassword(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @RequestBody @Valid NewPasswordDto newPasswordDto) {
+    public ResponseEntity<?> updatePassword(@RequestHeader(name = "Authorization") @Valid @NotBlank String token, @RequestBody @Valid NewPasswordDto newPasswordDto) {
         userService.setNewPassword(token, newPasswordDto.password);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -60,7 +60,7 @@ public class UserController {
     //done
     @Transactional
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteUser(@RequestHeader(name = "Authorization") @Valid @NotNull @NotBlank String token, @PathVariable(name = "id") @Valid long id) {
+    public ResponseEntity<?> deleteUser(@RequestHeader(name = "Authorization") @Valid @NotBlank String token, @PathVariable(name = "id") @Valid long id) {
         userService.deleteUserById(token, id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
