@@ -1,10 +1,7 @@
 package com.demo.novieindopdracht.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name="profiles")
@@ -16,11 +13,10 @@ public class Profile {
     @OneToOne(mappedBy = "profile")
     User user;
     @NotBlank
-    @Max(25)
+    @Size(max = 25)
     private String residence;
     @Column(unique=true)
-    @Min(9)
-    @Max(15)
+    @Size(min = 9, max = 15)
     private String phoneNumber;
     @Column(unique=true)
     @Email
