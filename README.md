@@ -21,6 +21,7 @@ Intellij en Webstorm
 Node.js (v22+)
 PostgreSQL (v17+)
 pgAdmin 4 v8
+Postman (laatste versie)
 
 Installatie (lokaal)
 Backend
