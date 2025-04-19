@@ -9,6 +9,7 @@ import java.util.List;
 public class AdvertisementOutputDto {
     @NotNull
     public Long advertisementId;
+    public List<CategoryOutputDto> category;
     @NotBlank
     public String title;
     public String description;
@@ -22,6 +23,10 @@ public class AdvertisementOutputDto {
     public String hasToGo;
     public List<BidOutputDto> bids;
     public Long userId;
+
+    public void setCategory(List<CategoryOutputDto> category) {
+        this.category = category;
+    }
 
     public void setImage(org.springframework.core.io.Resource image) {
         this.image = image;

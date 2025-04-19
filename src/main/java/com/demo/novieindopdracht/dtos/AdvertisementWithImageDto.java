@@ -9,6 +9,7 @@ import java.util.List;
 public class AdvertisementWithImageDto {
     @NotNull
     public Long advertisementId;
+    public List<CategoryOutputDto> category;
     @NotBlank
     public String title;
     public String description;

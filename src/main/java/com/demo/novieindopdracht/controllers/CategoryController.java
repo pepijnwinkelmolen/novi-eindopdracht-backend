@@ -22,7 +22,6 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    //done
     @GetMapping
     public ResponseEntity<List<CategoryOutputDto>> getCategories() {
         List<CategoryOutputDto> categoryOutputDtoList = categoryService.getCategories();

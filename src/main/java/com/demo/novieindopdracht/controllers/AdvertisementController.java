@@ -30,7 +30,6 @@ public class AdvertisementController {
         this.advertisementService = advertisementService;
     }
 
-    //done
     @GetMapping
     public ResponseEntity<List<AdvertisementProjectionWithImageDto>> getAdvertisements() throws IOException {
         List<AdvertisementProjectionOutputDto> items = advertisementService.getAllAdvertisements();
@@ -38,7 +37,6 @@ public class AdvertisementController {
         return new ResponseEntity<>(advertisementProjectionWithImageDtoList, HttpStatus.OK);
     }
 
-    //done
     @GetMapping("/search")
     public ResponseEntity<List<AdvertisementWithImageDto>> getSearchedAdvertisements(@RequestParam(name="query") @Valid @Size(min = 3, max = 20)
                                                                                       @Pattern(regexp = "^[A-Za-z0-9_]+$", message = "Not a valid input") String query) throws IOException {
@@ -47,9 +45,8 @@ public class AdvertisementController {
         return new ResponseEntity<>(advertisementWithImageDtoList, HttpStatus.OK);
     }
 
-    //done
     @GetMapping("/filter")
-    public ResponseEntity<List<AdvertisementWithImageDto>> getFilteredAdvertisements(@RequestParam(name="price") @Valid @Min(0) @Max(250) Double price,
+    public ResponseEntity<List<AdvertisementWithImageDto>> getFilteredAdvertisements(@RequestParam(name="price") @Valid @Min(0) @Max(1000) Double price,
                                                        @RequestParam(name="since", required = false) @Valid String since,
                                                        @RequestParam(name="has-to-go", required = false) @Valid String hasToGo) throws IOException {
         List<AdvertisementOutputDto> items = advertisementService.getAllAdvertisementsWithFilter(price, since, hasToGo);
@@ -57,7 +54,6 @@ public class AdvertisementController {
         return new ResponseEntity<>(advertisementWithImageDtoList, HttpStatus.OK);
     }
 
-    //done
     @GetMapping("/{id}")
     public ResponseEntity<Object> getAdvertisementById(@PathVariable(name = "id") @Valid long id) throws IOException {
         AdvertisementOutputDto item = advertisementService.getAdvertisementById(id);
@@ -68,7 +64,6 @@ public class AdvertisementController {
                 .body(advertisementWithImageDto);
     }
 
-    //done
     @GetMapping("/category/{category}")
     public ResponseEntity<List<AdvertisementWithImageDto>> getAdvertisementsByCategory(@PathVariable(name = "category") @Valid String category) throws IOException {
         List<AdvertisementOutputDto> items = advertisementService.getAllAdvertisementsByCategory(category);
@@ -76,12 +71,10 @@ public class AdvertisementController {
         return new ResponseEntity<>(advertisementWithImageDtoList, HttpStatus.OK);
     }
 
-    //done
     @Transactional
     @PostMapping
     public ResponseEntity<String> createAdvert(@RequestHeader(name = "Authorization") @Valid @NotBlank String token,
                                                                @ModelAttribute AdvertisementInputDto advertisementInputDto) {
-        System.out.println(advertisementInputDto.category);
         Long id = advertisementService.createAdvert(token, advertisementInputDto);
         String url = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/product/")
@@ -90,7 +83,6 @@ public class AdvertisementController {
         return ResponseEntity.created(URI.create(url)).body("Uw advertentie is aangemaakt. ID = " + id);
     }
 
-    //done
     @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAdvert(@RequestHeader(name = "Authorization") @Valid @NotBlank String token, @PathVariable(name = "id") @Valid long id) {

@@ -30,7 +30,6 @@ public class LoginController {
         this.jwtService = service;
     }
 
-    //done
     @PostMapping("/login")
     public ResponseEntity<Object> signIn(@RequestBody @Valid LoginDto loginDto) {
         UsernamePasswordAuthenticationToken up =

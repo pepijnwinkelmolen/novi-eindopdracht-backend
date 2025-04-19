@@ -20,6 +20,7 @@ public class AdvertisementMapper {
         advertisement.setImage(filename);
         advertisement.setDetails(advertisementInputDto.details);
         advertisement.setState(advertisementInputDto.state);
+        advertisement.setHasToGo(advertisementInputDto.hasToGo);
 
         return advertisement;
     }
@@ -27,6 +28,7 @@ public class AdvertisementMapper {
     public static AdvertisementOutputDto toDto(Advertisement advertisement) {
         AdvertisementOutputDto advertisementOutputDto = new AdvertisementOutputDto();
         advertisementOutputDto.advertisementId = advertisement.getAdvertisementId();
+        advertisementOutputDto.setCategory(CategoryMapper.toDtoList(advertisement.getCategories()));
         advertisementOutputDto.title = advertisement.getTitle();
         advertisementOutputDto.description = advertisement.getDescription();
         advertisementOutputDto.price = advertisement.getPrice();
@@ -43,6 +45,7 @@ public class AdvertisementMapper {
     public static AdvertisementWithImageDto toImageDto(AdvertisementOutputDto advertisementOutputDto) throws IOException {
         AdvertisementWithImageDto advertisementWithImageDto = new AdvertisementWithImageDto();
         advertisementWithImageDto.advertisementId = advertisementOutputDto.advertisementId;
+        advertisementWithImageDto.category = advertisementOutputDto.category;
         advertisementWithImageDto.title = advertisementOutputDto.title;
         advertisementWithImageDto.description = advertisementOutputDto.description;
         advertisementWithImageDto.price = advertisementOutputDto.price;

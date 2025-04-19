@@ -64,6 +64,10 @@ public class Advertisement {
         this.bids = bids;
     }
 
+    public List<Category> getCategories() {
+        return categories;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -118,6 +122,10 @@ public class Advertisement {
 
     public LocalDate getDate() {
         return date;
+    }
+
+    public void setHasToGo(String hasToGo) {
+        this.hasToGo = hasToGo;
     }
 
     public String getHasToGo() {
